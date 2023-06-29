@@ -32,10 +32,18 @@ export default class MPBounds {
      * @returns {MPBounds}
      */
     public static create(object: MPBoundsParams): MPBounds {
-        return new MPBounds(
-            object.northeast,
-            object.southwest,
-        );
+        var bounds;
+        if ((object as any).northeast.lat != null) {
+            var northeast = new MPPoint((object as any).northeast.lat, (object as any).northeast.lng, (object as any).northeast.zLevel);
+            var southwest = new MPPoint((object as any).southwest.lat, (object as any).southwest.lng, (object as any).southwest.zLevel);
+            bounds = new MPBounds(northeast, southwest)
+        }else {
+            bounds = new MPBounds(
+                object.northeast,
+                object.southwest,
+            );
+        }
+        return bounds
     }
 
     /**

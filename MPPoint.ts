@@ -1,8 +1,6 @@
 import MPGeometry from "./MPGeometry";
 import MPUtils from "./MPUtils";
 
-var firstTimeWarned = false
-
 /**
  * MPPoint is a representation of {@link latitude} and {@link longitude} coordinates packaged with
  * a Z-axis representation in {@link floorIndex}.
@@ -32,7 +30,7 @@ export default class MPPoint extends MPGeometry {
     public readonly longitude: number;
     /**
      * Optional index that defines what floor this point is placed on.
-     * 
+     *
      * If 0 it is placed on the ground floor, or outside.
      *
      * @public
@@ -69,7 +67,8 @@ export default class MPPoint extends MPGeometry {
         if (pointParams?.coordinates) {
             return new MPPoint(pointParams.coordinates[1], pointParams.coordinates[0], pointParams.coordinates[2]);
         } else if (pointParams as unknown as number[]){
-            return new MPPoint((pointParams as unknown as number[])[0], (pointParams as unknown as number[])[1], (pointParams as unknown as number[])[2]);
+            const pp = pointParams as unknown as number[]
+            return new MPPoint(pp[1], pp[0], pp[2]);
         }else {
             return null;
         }
@@ -156,7 +155,7 @@ export default class MPPoint extends MPGeometry {
 export interface MPPointParams {
     /**
      * Coordinate holder for point, on the form:.
-     * 
+     *
      * [LNG, LAT, FLOOR]
      *
      * @type {number[]}

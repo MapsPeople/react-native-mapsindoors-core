@@ -83,7 +83,7 @@ export default class MPDirectionsRenderer {
      * @param {?MPRoute} [route]
      * @returns {Promise<void>}
      */
-    public async setRoute(route?: MPRoute): Promise<void> {
+    public async setRoute(route: MPRoute): Promise<void> {
         await DirectionsRenderer.setRoute(JSON.stringify(route))
     }
 
@@ -111,8 +111,8 @@ export default class MPDirectionsRenderer {
      * @param {number} legIndex
      * @returns {Promise<void>}
      */
-    public async selectLegindex(legIndex: number): Promise<void> {
-        await DirectionsRenderer.selectLegindex(legIndex).catch((err: Error) => {
+    public async selectLegIndex(legIndex: number): Promise<void> {
+        await DirectionsRenderer.selectLegIndex(legIndex).catch((err: Error) => {
             return Promise.reject(MPError.create(JSON.parse(err.message)));
         });
     }

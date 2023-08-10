@@ -1,4 +1,5 @@
 import MPPoint from "./MPPoint";
+import { Platform } from "react-native";
 
 /**
  * A simple representation of a bounding box.
@@ -87,10 +88,19 @@ export default class MPBounds {
             ((point.longitude <= this.northeast.longitude &&
                 point.longitude >= this.southwest.longitude));
     }
+
+
     public toJSON() {
-        return {
-            "northeast": [this.northeast.longitude, this.northeast.latitude],
-            "southwest": [this.southwest.longitude, this.southwest.latitude]
+        if(Platform.OS === 'ios') {
+            return {
+                "northeast": [this.northeast.longitude, this.northeast.latitude],
+                "southwest": [this.southwest.longitude, this.southwest.latitude],
+            }
+        } else {
+            return {
+                "northeast": this.northeast,
+                "southwest": this.southwest,
+            }
         }
     }
 

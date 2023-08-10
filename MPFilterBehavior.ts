@@ -45,11 +45,11 @@ export default class MPFilterBehavior {
      */
     public static create(object?: MPFilterBehaviorParams): MPFilterBehavior {
         return new MPFilterBehavior(
-            object?.allowFloorChange ?? false,
-            object?.moveCamera ?? false,
-            object?.animationDuration ?? 0,
-            object?.showInfoWindow ?? false,
-            object?.zoomToFit ?? true
+            object?.allowFloorChange ? object.allowFloorChange : false,
+            object?.moveCamera ? object.moveCamera : false,
+            object?.animationDuration ? object.animationDuration : 0,
+            object?.showInfoWindow ? object.showInfoWindow : false,
+            object?.zoomToFit ? object?.zoomToFit : true
         );
     };
 }

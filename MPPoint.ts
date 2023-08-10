@@ -63,14 +63,12 @@ export default class MPPoint extends MPGeometry {
      * @param {MPPointParams} pointParams
      * @returns {MPPoint}
      */
-    public static create(pointParams: MPPointParams): MPPoint | undefined {
+    public static create(pointParams: MPPointParams): MPPoint {
         if (pointParams?.coordinates) {
             return new MPPoint(pointParams.coordinates[1], pointParams.coordinates[0], pointParams.coordinates[2]);
         } else if (pointParams as unknown as number[]){
             const pp = pointParams as unknown as number[]
             return new MPPoint(pp[1], pp[0], pp[2]);
-        }else {
-            return null;
         }
     }
 
@@ -140,7 +138,8 @@ export default class MPPoint extends MPGeometry {
      */
     public toJSON(): MPPointParams {
         return {
-            coordinates: [this.longitude, this.latitude, this.floorIndex ?? 0],
+            type: this.type,
+            coordinates: [this.longitude, this.latitude, this.floorIndex ? this.floorIndex : 0],
         };
     }
 }
@@ -153,6 +152,12 @@ export default class MPPoint extends MPGeometry {
  * @typedef {MPPointParams}
  */
 export interface MPPointParams {
+    /**
+     * the type of the geometry, leave this blank as it is just used to parse the geometry to JSON
+     * 
+     * @type {string}
+     */
+        type?: string,
     /**
      * Coordinate holder for point, on the form:.
      *

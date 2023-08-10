@@ -67,7 +67,7 @@ export default class MPSolutionConfig {
      * @type {MPCollisionHandling}
      */
     public get collisionHandling(): MPCollisionHandling {
-        return this._mpCollisionHandling ?? MPCollisionHandling.allowOverlap;
+        return this._mpCollisionHandling ? this._mpCollisionHandling : MPCollisionHandling.allowOverlap;
     }
 
     /**
@@ -88,7 +88,7 @@ export default class MPSolutionConfig {
      * @type {boolean}
      */
     public get enableClustering(): boolean {
-        return this._enableClustering ?? true;
+        return this._enableClustering ? this._enableClustering : true;
     }
 }
 

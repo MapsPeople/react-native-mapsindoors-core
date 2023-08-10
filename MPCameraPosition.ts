@@ -41,8 +41,8 @@ export default class MPCameraPosition {
         return new MPCameraPosition(
             object?.zoom,
             target,
-            object?.bearing ?? 0,
-            object?.tilt ?? 0,
+            object?.bearing ? object.bearing : 0,
+            object?.tilt ? object.tilt : 0,
         );
     }
 }

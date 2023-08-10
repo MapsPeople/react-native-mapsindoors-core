@@ -95,7 +95,10 @@ export default class MPPolygon extends MPGeometry {
      * @type {MPBounds}
      */
     public get bounds(): MPBounds {
-        return this._bounds ??= MPBounds.fromBBox(this._bbox);
+        if (this._bounds == undefined) {
+            this._bounds = MPBounds.fromBBox(this._bbox)
+        }
+        return this._bounds;
     }
 
     /**
@@ -106,7 +109,10 @@ export default class MPPolygon extends MPGeometry {
      * @returns {Promise<number>}
      */
     public async getArea(): Promise<number> {
-        return Promise.resolve(this._area ??= await MPUtils.geometryArea(this));
+        if (this._area == undefined) {
+            this._area = await MPUtils.geometryArea(this);
+        }
+        return Promise.resolve(this._area);
     }
 
     /**
@@ -175,8 +181,9 @@ export default class MPPolygon extends MPGeometry {
      */
     public toJSON(): MPPolygonParams {
         return {
-            "coordinates": this._coordinates, 
-            "bbox": this._bbox,
+            type: this.type,
+            coordinates: this._coordinates, 
+            bbox: this._bbox,
         }
     }
 }
@@ -191,6 +198,12 @@ export default class MPPolygon extends MPGeometry {
  */
 export interface MPPolygonParams {
 
+    /**
+     * the type of the geometry, leave this blank as it is just used to parse the geometry to JSON
+     * 
+     * @type {string}
+     */
+    type?: string,
     /**
      * Geometry, as specified in the [GeoJSON format]{@link https://stevage.github.io/geojson-spec/#section-3.1.6}.
      *

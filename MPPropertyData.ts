@@ -68,7 +68,7 @@ export default class MPPropertyData extends MPEntityInfo {
     public static create(object: MPPropertyDataParams): MPPropertyData {
         var floor;
         if (Platform.OS === 'ios') {
-            floor = object.floor as number;
+            floor = object?.floor as number;
         }else {
             floor = object?.floor ? parseInt(object?.floor as string) : undefined;
         }

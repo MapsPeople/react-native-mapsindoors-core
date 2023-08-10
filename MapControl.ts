@@ -650,6 +650,9 @@ export default class MapControl {
      * @returns {Promise<void>}
      */
     public async animateCamera(update: MPCameraUpdate, duration?: number): Promise<void> {
+        if (duration === undefined) {
+            duration = -1;
+        }
         await MapControlModule.animateCamera(JSON.stringify(update), duration);
     }
 
@@ -685,7 +688,7 @@ export default class MapControl {
      * @param {?boolean} [consumeEvent] Whether the SDK should also react to this event.
      */
     public setOnMapClickListener(listener?: OnMapClickListener, consumeEvent?: boolean): void {
-        MapControlModule.setOnMapClickListener(listener !== undefined, consumeEvent ?? false);
+        MapControlModule.setOnMapClickListener(listener !== undefined, consumeEvent ? true : false);
         this.onMapClickSub?.remove();
         if (listener !== undefined) {
             this.onMapClickSub = this.eventEmitter?.addListener(EventNames.onMapClick, event => {

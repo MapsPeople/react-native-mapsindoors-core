@@ -41,7 +41,7 @@ export default class MPLocation extends MPEntity {
      * @type {MPPoint}
      */
     public override get position(): MPPoint {
-        return this.properties?.anchor ?? new MPPoint(0, 0);
+        return this.properties?.anchor ? this.properties.anchor : new MPPoint(0, 0);
     }
 
     /**
@@ -280,7 +280,7 @@ export default class MPLocation extends MPEntity {
      * @returns {boolean}
      */
     public isBookable(): boolean {
-        return this.properties?.bookable ?? false;
+        return this.properties?.bookable ? this.properties.bookable : false;
     }
 
     /**

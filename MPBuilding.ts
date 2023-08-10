@@ -138,7 +138,7 @@ export default class MPBuilding extends MPEntity {
      * @type {string}
      */
     public get name(): string {
-        return this.buildingInfo?.name ?? "";
+        return this.buildingInfo?.name ? this.buildingInfo.name : "";
     }
 
     /**
@@ -149,7 +149,7 @@ export default class MPBuilding extends MPEntity {
      * @type {string[]}
      */
     public get aliases(): string[] {
-        return this.buildingInfo?.aliases ?? [];
+        return this.buildingInfo?.aliases ? this.buildingInfo.aliases : [];
     }
 
     /**
@@ -182,7 +182,7 @@ export default class MPBuilding extends MPEntity {
      * @type {number}
      */
     public get initialFloorIndex(): number {
-        return this.defaultFloor ?? this.floors[0].floorIndex ?? 0;
+        return this.defaultFloor ? this.defaultFloor : this.floors[0].floorIndex ? this.floors[0].floorIndex : 0;
     }
 
     /**

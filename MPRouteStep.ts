@@ -1,3 +1,4 @@
+import { Platform } from "react-native";
 import { MPRouteProperty, MPRoutePropertyParams, MPRouteCoordinate, MPRouteCoordinateParams } from "../../index";
 
 /**
@@ -57,7 +58,7 @@ export default class MPRouteStep {
             MPRouteProperty.create(object?.duration as MPRoutePropertyParams),
             object?.steps ? object?.steps.map((subStep: any) => MPRouteStep.create(subStep)): undefined,
             object?.geometry ? object?.geometry.map((geo: any) => MPRouteCoordinate.create(geo)): undefined,
-            object?.highway,
+            Platform.OS === "ios" ? (object as any).highway?.type: object?.highway,
             object?.abutters,
             object?.maneuver,
             MPRouteCoordinate.create(object?.start_location as MPRouteCoordinateParams),

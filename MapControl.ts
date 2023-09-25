@@ -861,4 +861,16 @@ export default class MapControl {
             MapControlModule.setOnFloorUpdateListener(false);
         }
     }
+
+    /**
+     * Set options for location labels
+     *
+     * @public
+     * @param textSize
+     * @param color
+     * @param showHalo
+     */
+    public setLabelOptions(textSize: number, color: String, showHalo: boolean): Promise<void> {
+        return MapControlModule.setLabelOptions(textSize, color, showHalo).then(() => Promise.resolve());
+    }
 }

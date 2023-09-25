@@ -102,6 +102,18 @@ export default class MPDirectionsRenderer {
     }
 
     /**
+     * Enable/Disable the route end/start label buttons from showing on the route. Default is true
+     *
+     * @public
+     * @async
+     * @param {boolean} show
+     * @returns {Promise<void>}
+     */
+    public async showRouteLegButtons(show: boolean): Promise<void> {
+        await DirectionsRenderer.showRouteLegButtons(show);
+    }
+    
+    /**
      * Manually set the selected leg index on the route.
      * 
      * This may reject if the resulting internal state is invalid (parsed index is out of bounds).

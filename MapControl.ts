@@ -866,11 +866,17 @@ export default class MapControl {
      * Set options for location labels
      *
      * @public
-     * @param textSize
-     * @param color
-     * @param showHalo
+     * @param textSize if undefined keeps the current textsize
+     * @param color if undefined keeps the current color
+     * @param showHalo default false
      */
-    public setLabelOptions(textSize: number, color: String, showHalo: boolean): Promise<void> {
+    public setLabelOptions(textSize?: number, color?: String, showHalo?: boolean): Promise<void> {
+        if (showHalo === undefined) {
+            showHalo = false;
+        }
+        if (textSize == undefined) {
+            textSize = -1;
+        } 
         return MapControlModule.setLabelOptions(textSize, color, showHalo).then(() => Promise.resolve());
     }
 }

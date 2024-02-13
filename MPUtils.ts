@@ -136,6 +136,18 @@ export default class MPUtils {
      *
      * @static
      * @async
+     * @param {boolean} enableClustering
+     * @returns {Promise<void>}
+     */
+    static async setNewSelection(isNewSelection: boolean): Promise<void> {
+        return Promise.resolve(UtilsModule.setNewSelection(isNewSelection));
+    }
+
+    /**
+     * Internal - Documentation will follow.
+     *
+     * @static
+     * @async
      * @param {number} opacity
      * @returns {Promise<void>}
      */

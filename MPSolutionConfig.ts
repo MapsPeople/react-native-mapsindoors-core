@@ -29,6 +29,7 @@ export default class MPSolutionConfig {
         public readonly settings3D: MPSettings3D,
         private _enableClustering?: boolean,
         private _mpCollisionHandling?: MPCollisionHandling,
+        private _isNewSelection?: boolean,
     ) { }
 
 
@@ -46,6 +47,7 @@ export default class MPSolutionConfig {
             MPSettings3D.create(object?.settings3D),
             object?.enableClustering,
             object?.collisionHandling,
+            object?.isNewSelection,
         );
     }
 
@@ -90,6 +92,15 @@ export default class MPSolutionConfig {
     public get enableClustering(): boolean {
         return this._enableClustering ? this._enableClustering : true;
     }
+
+    public set isNewSelection(enable: boolean) {
+        this._isNewSelection = enable;
+        MPUtils.setNewSelection(enable);
+    }
+
+    public get isNewSelection(): boolean {
+        return this._isNewSelection ? this._isNewSelection : true;
+    }
 }
 
 /**
@@ -124,4 +135,10 @@ export interface MPSolutionConfigParams {
      * @type {?MPCollisionHandling}
      */
     collisionHandling?: MPCollisionHandling,
+    /**
+     * New selection setting
+     * 
+     * @type {?boolean}
+     */
+    isNewSelection?: boolean,
 }

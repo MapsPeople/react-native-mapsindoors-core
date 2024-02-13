@@ -9,6 +9,7 @@ import {
     OnLiveLocationUpdateListener, MPCameraEvent, MPMapStyle, MPCameraUpdate, MPCameraPosition, MPEntity,
 } from "../../index"
 import { EventNames } from './EventNames';
+import MPHighlightBehavior from './MPHighlightBehavior';
 
 
 const { MapControlModule } = NativeModules;
@@ -260,8 +261,9 @@ export default class MapControl {
      * @returns {Promise<boolean>} True if any locations are available.
      */
     public async setFilter(filter: MPFilter, filterBehavior: MPFilterBehavior): Promise<boolean>;
+    
     /**
-     * Use this method to display temporary locations, not points of interests location. Use [clearFilter()] to exit this state.
+     * Use this method to display temporary locations. Use [clearFilter()] to exit this state.
      *
      * @public
      * @async
@@ -279,6 +281,26 @@ export default class MapControl {
         } else {
             return Promise.resolve(MapControlModule.setFilter(JSON.stringify(locationOrFilter), JSON.stringify(filterBehavior)));
         }
+    }
+
+    /**
+     * 
+     * Use this method to highlight a list of locations. Use [clearHighlight()] to exit this state.
+     * 
+     * @param locations the locations to highlight
+     * @param highlightBehavior How the map should show the applied highlight
+     * @returns 
+     */
+    public async setHighlight(locations: MPLocation[], highlightBehavior: MPHighlightBehavior): Promise<void> {
+        const locationIds: string[] = new Array();
+        locations.forEach((location => {
+            locationIds.push(location.id);
+        }));
+        return Promise.resolve(MapControlModule.setHighlight(JSON.stringify(locationIds), JSON.stringify(highlightBehavior)));
+    }
+
+    public async clearHighlight(): Promise<void> {
+        return MapControlModule.clearHighlight();
     }
 
     /**

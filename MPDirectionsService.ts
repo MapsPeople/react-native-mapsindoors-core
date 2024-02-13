@@ -58,6 +58,31 @@ export default class MPDirectionsService {
     }
 
     /**
+     * Add an excludeWayType, these are based on [OSM highways](https://wiki.openstreetmap.org/wiki/Key:highway).
+     * 
+     * Supported types are defined in {@link MPHighway}.
+     *
+     * @public
+     * @async
+     * @param {string} wayType
+     * @returns {Promise<void>}
+     */
+    public async addExcludeWayType(wayType: string): Promise<void> {
+        return DirectionsService.addExcludeWayType(wayType, this.id);
+    }
+
+    /**
+     * Clears all added excludeWayType.
+     *
+     * @public
+     * @async
+     * @returns {Promise<void>}
+     */
+    public async clearExcludeWayType(): Promise<void> {
+        return DirectionsService.clearExcludeWayType(this.id);
+    }
+
+    /**
      * Sets whether routes should use departure time or arrival time when using the transit travel mode.
      *
      * @public

@@ -43,7 +43,7 @@ export default class MPHighlightBehavior {
      * @param {MPFilterBehaviorParams} object
      * @returns {MPFilterBehavior}
      */
-    public static create(object?: MPFilterBehaviorParams): MPHighlightBehavior {
+    public static create(object?: MPHighlightBehaviorParams): MPHighlightBehavior {
         return new MPHighlightBehavior(
             object?.allowFloorChange ? object.allowFloorChange : false,
             object?.moveCamera ? object.moveCamera : false,

@@ -23,6 +23,9 @@ export default class MPRouteLeg {
      * @param {?string} [endAdress] The address at the end of the leg.
      * @param {?MPRouteCoordinate} [startLocation] The start coordinate of the leg.
      * @param {?MPRouteCoordinate} [endLocation] The end coordinate of the leg.
+     * @param {?string} [legStartReason] The reason for the start of the leg.
+     * @param {?string} [legEndReason] The reason for the end of the leg.
+     * @param {?number} [stopIndex] The index of the stop.
      */
     private constructor(
         public readonly steps?: MPRouteStep[],
@@ -32,6 +35,9 @@ export default class MPRouteLeg {
         public readonly endAdress?: string,
         public readonly startLocation?: MPRouteCoordinate,
         public readonly endLocation?: MPRouteCoordinate,
+        public readonly legStartReason?: string,
+        public readonly legEndReason?: string,
+        public readonly stopIndex?: number,
     ) { }
 
 
@@ -52,6 +58,9 @@ export default class MPRouteLeg {
             object?.end_address,
             MPRouteCoordinate.create(object?.start_location as MPRouteCoordinateParams),
             MPRouteCoordinate.create(object?.end_location as MPRouteCoordinateParams),
+            object?.leg_start_reason,
+            object?.leg_end_reason,
+            object?.stop_index,
         );
     }
 
@@ -71,6 +80,9 @@ export default class MPRouteLeg {
             steps: this.steps,
             distance: this.distance,
             duration: this.duration,
+            leg_start_reason: this.legStartReason,
+            leg_end_reason: this.legEndReason,
+            stop_index: this.stopIndex,
         };
     }
 }
@@ -125,4 +137,22 @@ export interface MPRouteLegParams {
      * @type {?MPRouteCoordinate}
      */
     end_location?: MPRouteCoordinate;
+    /**
+     * The reason for the start of the leg.
+     *
+     * @type {?string}
+     */
+    leg_start_reason?: string;
+    /**
+     * The reason for the end of the leg.
+     *
+     * @type {?string}
+     */
+    leg_end_reason?: string;
+    /**
+     * The index of the stop.
+     *
+     * @type {?number}
+     */
+    stop_index?: number;
 }

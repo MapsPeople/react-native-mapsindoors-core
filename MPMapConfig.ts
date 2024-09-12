@@ -97,6 +97,36 @@ export default class MPMapConfig {
     public readonly floorSelector?: MPFloorSelectorInterface;
 
     /**
+     * The zoom level at which the map should transition to MapsIndoors tiles. Mapbox specific.
+     * 
+     * The default value is 17.
+     * @public
+     * @readonly
+     * @type {?number}
+     */
+    public readonly mapsIndoorsTransitionLevel?: number;
+
+    /**
+     * Whether to show the mapbox markers on the map. Includes POI's and Places.
+     * Mapbox specific
+     * The default value is undefined, and enables/disables based on the transition zoom level.
+     * @public
+     * @readonly
+     * @type {?boolean}
+     */
+    public readonly showMapMarkers?: boolean;
+
+    /**
+     * Whether to show the road labels on the map.
+     * Mapbox specific
+     * The default value is undefined, and enables/disables based on the transition zoom level.
+     * @public
+     * @readonly
+     * @type {?boolean}
+     */
+    public readonly showRoadLabels?: boolean;
+
+    /**
      * Creates an instance of MPMapConfig.
      *
      * @constructor
@@ -114,6 +144,9 @@ export default class MPMapConfig {
         this.showUserPosition = params.showUserPosition;
         this.enableTileFadeIn = params.enableTileFadeIn;
         this.floorSelector = params.floorSelector;
+        this.mapsIndoorsTransitionLevel = params.mapsIndoorsTransitionLevel;
+        this.showMapMarkers = params.showMapMarkers;
+        this.showRoadLabels = params.showRoadLabels;
     }
 }
 
@@ -208,4 +241,25 @@ export interface MPMapConfigParams {
      * @type {?MPFloorSelectorInterface}
      */
     floorSelector?: MPFloorSelectorInterface,
+    /**
+     * The zoom level at which the map should transition to MapsIndoors tiles. Mapbox specific.
+     * 
+     * The default value is 17.
+     * @type {?number}
+     */
+    mapsIndoorsTransitionLevel?: number,
+    /**
+     * Whether to show the mapbox markers on the map. Includes POI's and Places.
+     * Mapbox specific
+     * The default value is undefined, and enables/disables based on the transition zoom level.
+     * @type {?boolean}
+     */
+    showMapMarkers?: boolean,
+    /**
+     * Whether to show the road labels on the map.
+     * Mapbox specific
+     * The default value is undefined, and enables/disables based on the transition zoom level.
+     * @type {boolean}
+     */
+    showRoadLabels?: boolean,
 }

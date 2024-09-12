@@ -18,4 +18,8 @@ export enum MPCameraViewFitMode {
      * goes directly from the origin to the destination.
      */
     startToEndAligned,
+    /**
+     * The camera will not be aligned in any way.
+     */
+    none
 }

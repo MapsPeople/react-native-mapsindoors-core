@@ -1,4 +1,5 @@
 import { MPCollisionHandling, MPSettings3D } from "../../index";
+import MPLocationSettings from "./MPLocationSettings";
 import MPUtils from "./MPUtils";
 
 /**
@@ -27,6 +28,7 @@ export default class MPSolutionConfig {
     private constructor(
         public readonly id: string,
         public readonly settings3D: MPSettings3D,
+        public readonly locationSettings: MPLocationSettings,
         private _enableClustering?: boolean,
         private _mpCollisionHandling?: MPCollisionHandling,
         private _isNewSelection?: boolean,
@@ -45,6 +47,7 @@ export default class MPSolutionConfig {
         return new MPSolutionConfig(
             object?.id,
             MPSettings3D.create(object?.settings3D),
+            MPLocationSettings.create("solution", object?.locationSettings),
             object?.enableClustering,
             object?.collisionHandling,
             object?.isNewSelection,
@@ -101,6 +104,14 @@ export default class MPSolutionConfig {
     public get isNewSelection(): boolean {
         return this._isNewSelection ? this._isNewSelection : true;
     }
+
+    public get selectable(): boolean | undefined {
+        return this.locationSettings.selectable;
+    }
+
+    public set selectable(selectable: boolean | undefined) {
+        this.locationSettings.selectable = selectable;
+    }
 }
 
 /**
@@ -141,4 +152,11 @@ export interface MPSolutionConfigParams {
      * @type {?boolean}
      */
     isNewSelection?: boolean,
+
+    /**
+     * Location settings
+     * 
+     * @type {MPLocationSettings}
+     */
+    locationSettings: MPLocationSettings,
 }

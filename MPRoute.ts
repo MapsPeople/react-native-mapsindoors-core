@@ -19,6 +19,7 @@ export default class MPRoute {
      * @param {?string[]} [warnings] Any warnings issued for any paths on the route.
      * @param {?string[]} [restrictions] All restrictions in place for the route.
      * @param {?MPBounds} [bounds] The outer bounds of the route.
+     * @param {?number[]} [orderedStopIndexes] The original indexes of the stops in the route.
      */
     private constructor(
         public readonly legs?: MPRouteLeg[],
@@ -27,6 +28,7 @@ export default class MPRoute {
         public readonly warnings?: string[],
         public readonly restrictions?: string[],
         public readonly bounds?: MPBounds,
+        public readonly ordered_stop_indexes?: number[],
     ) { }
 
     /**
@@ -44,6 +46,7 @@ export default class MPRoute {
             object?.warnings,
             object?.restrictions,
             object?.bounds ? MPBounds.create(object?.bounds) : undefined,
+            object?.ordered_stop_indexes,
         );
     }
 }
@@ -92,4 +95,11 @@ export interface MPRouteParams {
      * @type {?MPBoundsParams}
      */
     bounds?: MPBoundsParams,
+
+    /**
+     * The original indexes of the stops in the route.
+     *
+     * @type {?number[]}
+     */
+    ordered_stop_indexes?: number[],
 }

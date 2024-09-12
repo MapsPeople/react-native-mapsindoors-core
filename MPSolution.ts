@@ -1,4 +1,5 @@
 import { MPSolutionConfig } from "../../index";
+import MPPOIType from "./MPPOIType";
 import MPUtils from "./MPUtils";
 
 /**
@@ -35,6 +36,7 @@ export default class MPSolution {
         public readonly locationTemplates?: string,
         public readonly customerId?: string,
         public mapClientUrl?: string,
+        public readonly types?: MPPOIType[]
     ) { }
 
 
@@ -57,6 +59,7 @@ export default class MPSolution {
             object?.locationTemplates,
             object?.customerId,
             object?.mapClientUrl,
+            object?.types?.map((type: any) => MPPOIType.create(type)),
         );
     }
 
@@ -171,6 +174,12 @@ export interface MPSolutionParams {
      * @type {?string}
      */
     locationTemplates?: string;
+    /**
+     * The solution's POI types.
+     *
+     * @type {?MPPOIType[]}
+     */
+    types?: MPPOIType[];
     /**
      * An array of modules that define some behaviors of the SDK set through the CMS.
      *

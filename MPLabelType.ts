@@ -7,4 +7,5 @@
 export enum MPLabelType {
     flat,
     floating,
+    graphic
 }

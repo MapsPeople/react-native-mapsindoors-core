@@ -32,10 +32,11 @@ export default class MapsIndoors {
      * @static
      * @async
      * @param {String} apiKey The key to the MapsIndoors solution.
+     * @param {String[]} [venues=null] An optional list of venueIds as strings.
      * @returns {Promise<void>} If the load fails for any reason, it will reject with a {@link MPError}.
      */
-    public static async load(apiKey: String): Promise<void> {
-        return MapsIndoorsModule.loadMapsIndoors(apiKey).catch((err: Error) =>
+    public static async load(apiKey: String, venues: String[] = null): Promise<void> {
+        return MapsIndoorsModule.loadMapsIndoors(apiKey, venues).catch((err: Error) =>
             Promise.reject(MPError.parse(err))
         );
     }
@@ -527,4 +528,21 @@ export default class MapsIndoors {
         });
     }
 
+    public static async addVenuesToSync(venues: string[]): Promise<void> {
+        return MapsIndoorsModule.addVenuesToSync(venues);
+    }
+
+    public static async removeVenuesToSync(venues: string[]): Promise<void> {
+        return MapsIndoorsModule.removeVenuesToSync(venues);
+    }
+    
+    public static async getSyncedVenues(): Promise<string[]> {
+        return MapsIndoorsModule.getSyncedVenues().then((venues: string[]|null) => {
+            if (venues === null || venues === undefined) {
+                return [];
+            }else {
+                return venues;
+            }
+        });
+    }
 }

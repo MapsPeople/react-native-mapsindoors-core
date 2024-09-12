@@ -3,6 +3,7 @@ import { MPError, MPIconSize } from "../../index";
 import { MPIconPlacement } from './MPIconPlacement';
 import { MPLabelType } from './MPLabelType';
 import { MPBadgePosition } from './MPBadgePosition';
+import MPLabelGraphic from './MPLabelGraphic';
 const { DisplayRule } = NativeModules;
 
 
@@ -1079,8 +1080,8 @@ export default class MPDisplayRule {
     }
 
     /**
-     * 
-     * @returns 
+     * Get the scale value of the icon.
+     * @returns Promise<number>
      */
     public async getIconScale(): Promise<number> {
         return DisplayRule.getIconScale(this.id).catch((err: Error) => {
@@ -1089,8 +1090,8 @@ export default class MPDisplayRule {
     } 
     
     /**
-     * 
-     * @returns 
+     * Set the scale value of the icon.
+     * @returns Promise<void>
      */
     public async setIconScale(iconScale: number): Promise<void> {
         if (iconScale == null) {
@@ -1102,8 +1103,8 @@ export default class MPDisplayRule {
     }
 
     /**
-     * 
-     * @returns 
+     * Get the icon's anchor value.
+     * @returns Promise<MPIconAnchor>
      */
     public async getIconPlacement(): Promise<MPIconPlacement> {
         return DisplayRule.getIconPlacement(this.id).catch((err: Error) => {
@@ -1112,8 +1113,8 @@ export default class MPDisplayRule {
     } 
     
     /**
-     * 
-     * @returns 
+     * Set the icon's anchor value.
+     * @returns Promise<void>
      */
     public async setIconPlacement(iconPlacement: MPIconPlacement): Promise<void> {
         if (iconPlacement == null) {
@@ -1128,8 +1129,8 @@ export default class MPDisplayRule {
     }
 
     /**
-     * 
-     * @returns 
+     * Get the type of the label.
+     * @returns Promise<MPLabelType>
      */
     public async getLabelType(): Promise<MPLabelType> {
         return DisplayRule.getLabelType(this.id).catch((err: Error) => {
@@ -1138,8 +1139,8 @@ export default class MPDisplayRule {
     }
     
     /**
-     * 
-     * @returns 
+     * Set the type of the label.
+     * @returns Promise<void>
      */
     public async setLabelType(labelType: MPLabelType): Promise<void> {
         if (labelType == null) {
@@ -1150,13 +1151,12 @@ export default class MPDisplayRule {
             return DisplayRule.setLabelType(this.id, labelType.valueOf()).catch((err: Error) => {
                 return Promise.reject(MPError.create(JSON.parse(err.message)));
             });
-
         }
     }
 
     /**
-     * 
-     * @returns 
+     * Get the label's text size.
+     * @returns Promise<number>
      */
     public async getLabelStyleTextSize(): Promise<number> {
         return DisplayRule.getLabelStyleTextSize(this.id).catch((err: Error) => {
@@ -1165,8 +1165,8 @@ export default class MPDisplayRule {
     } 
     
     /**
-     * 
-     * @returns 
+     * Set the label's text size.
+     * @returns Promise<void>
      */
     public async setLabelStyleTextSize(textSize: number): Promise<void> {
         if (textSize == null) {
@@ -1178,8 +1178,8 @@ export default class MPDisplayRule {
     }
 
     /**
-     * 
-     * @returns 
+     * Get the label's text color
+     * @returns Promise<string>
      */
     public async getLabelStyleTextColor(): Promise<string> {
         return DisplayRule.getLabelStyleTextColor(this.id).catch((err: Error) => {
@@ -1188,8 +1188,8 @@ export default class MPDisplayRule {
     } 
     
     /**
-     * 
-     * @returns 
+     * Set the label's text color
+     * @returns Promise<void>
      */
     public async setLabelStyleTextColor(textColor: String): Promise<void> {
         return DisplayRule.setLabelStyleTextColor(this.id, textColor).catch((err: Error) => {
@@ -1198,8 +1198,8 @@ export default class MPDisplayRule {
     }
 
     /**
-     * 
-     * @returns 
+     * Get the label's text opacity
+     * @returns Promise<number>
      */
     public async getLabelStyleTextOpacity(): Promise<number> {
         return DisplayRule.getLabelStyleTextOpacity(this.id).catch((err: Error) => {
@@ -1208,8 +1208,8 @@ export default class MPDisplayRule {
     } 
     
     /**
-     * 
-     * @returns 
+     * Set the label's text opacity
+     * @returns Promise<void>
      */
     public async setLabelStyleTextOpacity(textOpacity: number): Promise<void> {
         if (textOpacity == null) {
@@ -1221,8 +1221,8 @@ export default class MPDisplayRule {
     }
 
     /**
-     * 
-     * @returns 
+     * Get the label's halo color
+     * @returns Promise<string>
      */
     public async getLabelStyleHaloColor(): Promise<string> {
         return DisplayRule.getLabelStyleHaloColor(this.id).catch((err: Error) => {
@@ -1231,8 +1231,8 @@ export default class MPDisplayRule {
     } 
     
     /**
-     * 
-     * @returns 
+     * Set the label's halo color
+     * @returns Promise<void>
      */
     public async setLabelStyleHaloColor(color: string): Promise<void> {
         return DisplayRule.setLabelStyleHaloColor(this.id, color).catch((err: Error) => {
@@ -1241,8 +1241,8 @@ export default class MPDisplayRule {
     }
 
     /**
-     * 
-     * @returns 
+     * Get the label's halo width
+     * @returns Promise<number>
      */
     public async getLabelStyleHaloWidth(): Promise<number> {
         return DisplayRule.getLabelStyleHaloWidth(this.id).catch((err: Error) => {
@@ -1251,8 +1251,8 @@ export default class MPDisplayRule {
     } 
     
     /**
-     * 
-     * @returns 
+     * Set the label's halo width
+     * @returns Promise<void>
      */
     public async setLabelStyleHaloWidth(haloWidth: number): Promise<void> {
         if (haloWidth == null) {
@@ -1264,8 +1264,8 @@ export default class MPDisplayRule {
     }
 
     /**
-     * 
-     * @returns 
+     * Get the label's halo blur
+     * @returns Promise<number>
      */
     public async getLabelStyleHaloBlur(): Promise<number> {
         return DisplayRule.getLabelStyleHaloBlur(this.id).catch((err: Error) => {
@@ -1274,8 +1274,8 @@ export default class MPDisplayRule {
     } 
     
     /**
-     * 
-     * @returns 
+     * Set the label's halo blur
+     * @returns Promise<void>
      */
     public async setLabelStyleHaloBlur(haloBlur: number): Promise<void> {
         if (haloBlur == null) {
@@ -1287,8 +1287,8 @@ export default class MPDisplayRule {
     }
 
     /**
-     * 
-     * @returns 
+     * Get the label's bearing
+     * @returns Promise<number>
      */
     public async getLabelStyleBearing(): Promise<number> {
         return DisplayRule.getLabelStyleBearing(this.id).catch((err: Error) => {
@@ -1297,8 +1297,8 @@ export default class MPDisplayRule {
     } 
     
     /**
-     * 
-     * @returns 
+     * Set the label's bearing
+     * @returns Promise<void>
      */
     public async setLabelStyleBearing(bearing: number): Promise<void> {
         if (bearing == null) {
@@ -1310,8 +1310,29 @@ export default class MPDisplayRule {
     }
 
     /**
-     * 
-     * @returns 
+     * Set the label's Graphic style
+     * @param graphicLabel MPLabelGraphic
+     * @returns Promise<void>
+     */
+    public async setLabelStyleGraphic(graphicLabel: MPLabelGraphic): Promise<void> {
+        return DisplayRule.setLabelStyleGraphic(this.id, JSON.stringify(graphicLabel)).catch((err: Error) => {
+            return Promise.reject(MPError.create(JSON.parse(err.message)));
+        });
+    }
+
+    /**
+     * Get the label's Graphic style
+     * @returns Promise<MPLabelGraphic>
+     */
+    public async getLabelStyleGraphic(): Promise<MPLabelGraphic> {
+        return DisplayRule.getLabelStyleGraphic(this.id).catch((err: Error) => {
+            return Promise.reject(MPError.create(JSON.parse(err.message)));
+        });
+    }
+
+    /**
+     * Get the polygon's lightness factor.
+     * @returns Promise<number>
      */
     public async getPolygonLightnessFactor(): Promise<number> {
         return DisplayRule.getPolygonLightnessFactor(this.id).catch((err: Error) => {
@@ -1320,8 +1341,8 @@ export default class MPDisplayRule {
     } 
     
     /**
-     * 
-     * @returns 
+     * Set the polygon's lightness factor.
+     * @returns Promise<void>
      */
     public async setPolygonLightnessFactor(lightnessFactor: number): Promise<void> {
         if (lightnessFactor == null) {
@@ -1333,8 +1354,8 @@ export default class MPDisplayRule {
     }
 
     /**
-     * 
-     * @returns 
+     * Get the wall's lightness factor.
+     * @returns Promise<number>
      */
     public async getWallLightnessFactor(): Promise<number> {
         return DisplayRule.getWallLightnessFactor(this.id).catch((err: Error) => {
@@ -1343,8 +1364,8 @@ export default class MPDisplayRule {
     } 
     
     /**
-     * 
-     * @returns 
+     * Set the wall's lightness factor.
+     * @returns Promise<void>
      */
     public async setWallLightnessFactor(lightnessFactor: number): Promise<void> {
         if (lightnessFactor == null) {
@@ -1356,8 +1377,8 @@ export default class MPDisplayRule {
     }
 
     /**
-     * 
-     * @returns 
+     * Get the extrusion's lightness factor.
+     * @returns Promise<number>
      */
     public async getExtrusionLightnessFactor(): Promise<number> {
         return DisplayRule.getExtrusionLightnessFactor(this.id).catch((err: Error) => {
@@ -1366,8 +1387,8 @@ export default class MPDisplayRule {
     } 
     
     /**
-     * 
-     * @returns 
+     * Set the extrusion's lightness factor.
+     * @returns Promise<void>
      */
     public async setExtrusionLightnessFactor(lightnessFactor: number): Promise<void> {
         if (lightnessFactor == null) {
@@ -1379,8 +1400,8 @@ export default class MPDisplayRule {
     }
 
     /**
-     * 
-     * @returns 
+     * Get the badge's visibility.
+     * @returns Promise<boolean>
      */
     public async isBadgeVisible(): Promise<boolean> {
         return DisplayRule.isBadgeVisible(this.id).catch((err: Error) => {
@@ -1389,8 +1410,8 @@ export default class MPDisplayRule {
     } 
     
     /**
-     * 
-     * @returns 
+     * Set the badge's visibility.
+     * @returns Promise<void>
      */
     public async setBadgeVisible(visible: boolean): Promise<void> {
         return DisplayRule.setBadgeVisible(this.id, JSON.stringify(visible)).catch((err: Error) => {
@@ -1399,8 +1420,8 @@ export default class MPDisplayRule {
     }
 
     /**
-     * 
-     * @returns 
+     * Get the badge's Zoom From value.
+     * @returns Promise<number>
      */
     public async getBadgeZoomFrom(): Promise<number> {
         return DisplayRule.getBadgeZoomFrom(this.id).catch((err: Error) => {
@@ -1409,8 +1430,8 @@ export default class MPDisplayRule {
     } 
     
     /**
-     * 
-     * @returns 
+     * Set the badge's Zoom From value.
+     * @returns Promise<void>
      */
     public async setBadgeZoomFrom(zoomFrom: number): Promise<void> {
         if (zoomFrom == null) {
@@ -1422,8 +1443,8 @@ export default class MPDisplayRule {
     }
 
     /**
-     * 
-     * @returns 
+     * Get the badge's Zoom To value.
+     * @returns Promise<number>
      */
     public async getBadgeZoomTo(): Promise<number> {
         return DisplayRule.getBadgeZoomTo(this.id).catch((err: Error) => {
@@ -1432,8 +1453,8 @@ export default class MPDisplayRule {
     } 
     
     /**
-     * 
-     * @returns 
+     * Set the badge's Zoom To value.
+     * @returns Promise<void>
      */
     public async setBadgeZoomTo(zoomTo: number): Promise<void> {
         if (zoomTo == null) {
@@ -1445,8 +1466,8 @@ export default class MPDisplayRule {
     }
 
     /**
-     * 
-     * @returns 
+     * Get the badge's radius.
+     * @returns Promise<number>
      */
     public async getBadgeRadius(): Promise<number> {
         return DisplayRule.getBadgeRadius(this.id).catch((err: Error) => {
@@ -1455,8 +1476,8 @@ export default class MPDisplayRule {
     } 
     
     /**
-     * 
-     * @returns 
+     * Set the badge's radius.
+     * @returns Promise<void>
      */
     public async setBadgeRadius(radius: number): Promise<void> {
         if (radius == null) {
@@ -1468,8 +1489,8 @@ export default class MPDisplayRule {
     }
 
     /**
-     * 
-     * @returns 
+     * Get the badge's stroke width.
+     * @returns Promise<number>
      */
     public async getBadgeStrokeWidth(): Promise<number> {
         return DisplayRule.getBadgeStrokeWidth(this.id).catch((err: Error) => {
@@ -1478,8 +1499,8 @@ export default class MPDisplayRule {
     } 
     
     /**
-     * 
-     * @returns 
+     * Set the badge's stroke width.
+     * @returns Promise<void>
      */
     public async setBadgeStrokeWidth(strokeWidth: number): Promise<void> {
         if (strokeWidth == null) {
@@ -1491,8 +1512,8 @@ export default class MPDisplayRule {
     }
 
     /**
-     * 
-     * @returns 
+     * Get the badge's stroke color.
+     * @returns Promise<string>
      */
     public async getBadgeStrokeColor(): Promise<string> {
         return DisplayRule.getBadgeStrokeColor(this.id).catch((err: Error) => {
@@ -1501,8 +1522,8 @@ export default class MPDisplayRule {
     } 
     
     /**
-     * 
-     * @returns 
+     * Set the badge's stroke color.
+     * @returns Promise<void>
      */
     public async setBadgeStrokeColor(strokeColor: string): Promise<void> {
         return DisplayRule.setBadgeStrokeColor(this.id, strokeColor).catch((err: Error) => {
@@ -1511,8 +1532,8 @@ export default class MPDisplayRule {
     }
 
     /**
-     * 
-     * @returns 
+     * Get the badge's fill color.
+     * @returns Promise<string>
      */
     public async getBadgeFillColor(): Promise<string> {
         return DisplayRule.getBadgeFillColor(this.id).catch((err: Error) => {
@@ -1521,8 +1542,8 @@ export default class MPDisplayRule {
     } 
     
     /**
-     * 
-     * @returns 
+     * Set the badge's fill color.
+     * @returns Promise<void>
      */
     public async setBadgeFillColor(fillColor: string): Promise<void> {
         return DisplayRule.setBadgeFillColor(this.id, fillColor).catch((err: Error) => {
@@ -1531,8 +1552,8 @@ export default class MPDisplayRule {
     }
 
     /**
-     * 
-     * @returns 
+     * Get the badge's scale.
+     * @returns Promise<number>
      */
     public async getBadgeScale(): Promise<number> {
         return DisplayRule.getBadgeScale(this.id).catch((err: Error) => {
@@ -1541,8 +1562,8 @@ export default class MPDisplayRule {
     } 
     
     /**
-     * 
-     * @returns 
+     * Set the badge's scale.
+     * @returns Promise<void>
      */
     public async setBadgeScale(badgeScale: number): Promise<void> {
         if (badgeScale == null) {
@@ -1554,8 +1575,8 @@ export default class MPDisplayRule {
     }
 
     /**
-     * 
-     * @returns 
+     * Get the badge's position.
+     * @returns Promise<MPBadgePosition>
      */
     public async getBadgePosition(): Promise<MPBadgePosition> {
         return DisplayRule.getBadgePosition(this.id).catch((err: Error) => {
@@ -1564,8 +1585,8 @@ export default class MPDisplayRule {
     }
     
     /**
-     * 
-     * @returns 
+     * Set the badge's position.
+     * @returns Promise<void>
      */
     public async setBadgePosition(badgePosition: MPBadgePosition): Promise<void> {
         if (badgePosition == null) {
@@ -1577,6 +1598,192 @@ export default class MPDisplayRule {
                 return Promise.reject(MPError.create(JSON.parse(err.message)));
             });
         }
+    }
+
+    /**
+     * Get the 3D model's URL.
+     * @returns Promise<string>
+     */
+    public async getModel3DModel(): Promise<string> {
+        return DisplayRule.getModel3DModel(this.id).catch((err: Error) => {
+            return Promise.reject(MPError.create(JSON.parse(err.message)));
+        });
+    }
+
+    /**
+     * Set the 3D model's URL.
+     * @param url string
+     * @returns Promise<void>
+     */
+    public async setModel3DModel(url: string): Promise<void> {
+        return DisplayRule.setModel3DModel(this.id, url).catch((err: Error) => {
+            return Promise.reject(MPError.create(JSON.parse(err.message)));
+        });
+    }
+
+    /**
+     * Get the 3D model's rotation X.
+     * @returns Promise<number>
+     */
+    public async getModel3DRotationX(): Promise<number> {
+        return DisplayRule.getModel3DRotationX(this.id).catch((err: Error) => {
+            return Promise.reject(MPError.create(JSON.parse(err.message)));
+        });
+    }
+
+    /**
+     * Set the 3D model's rotation X.
+     * @param rotationX number
+     * @returns Promise<void>
+     */
+    public async setModel3DRotationX(rotationX: number): Promise<void> {
+        if (rotationX == null) {
+            rotationX = -1;
+        }
+        return DisplayRule.setModel3DRotationX(this.id, rotationX).catch((err: Error) => {
+            return Promise.reject(MPError.create(JSON.parse(err.message)));
+        });
+    }
+
+    /**
+     * Get the 3D model's rotation Y.
+     * @returns Promise<number>
+    */
+    public async getModel3DRotationY(): Promise<number> {
+        return DisplayRule.getModel3DRotationY(this.id).catch((err: Error) => {
+            return Promise.reject(MPError.create(JSON.parse(err.message)));
+        });
+    }
+
+    /**
+     * Set the 3D model's rotation Y.
+     * @param rotationY number
+     * @returns Promise<void>
+     */
+    public async setModel3DRotationY(rotationY: number): Promise<void> {
+        if (rotationY == null) {
+            rotationY = -1;
+        }
+        return DisplayRule.setModel3DRotationY(this.id, rotationY).catch((err: Error) => {
+            return Promise.reject(MPError.create(JSON.parse(err.message)));
+        });
+    }
+
+    /**
+     * Get the 3D model's rotation Z.
+     * @returns Promise<number>
+     */
+    public async getModel3DRotationZ(): Promise<number> {
+        return DisplayRule.getModel3DRotationZ(this.id).catch((err: Error) => {
+            return Promise.reject(MPError.create(JSON.parse(err.message)));
+        });
+    }
+
+    /**
+     * Set the 3D model's rotation Z.
+     * @param rotationZ number
+     * @returns Promise<void>
+     */
+    public async setModel3DRotationZ(rotationZ: number): Promise<void> {
+        if (rotationZ == null) {
+            rotationZ = -1;
+        }
+        return DisplayRule.setModel3DRotationZ(this.id, rotationZ).catch((err: Error) => {
+            return Promise.reject(MPError.create(JSON.parse(err.message)));
+        });
+    }
+
+    /**
+     * Get the 3D model's scale.
+     * @returns Promise<number>
+     */
+    public async getModel3DScale(): Promise<number> {
+        return DisplayRule.getModel3DScale(this.id).catch((err: Error) => {
+            return Promise.reject(MPError.create(JSON.parse(err.message)));
+        });
+    }
+
+    /**
+     * Set the 3D model's scale.
+     * @param scale number
+     * @returns Promise<void>
+     */
+    public async setModel3DScale(scale: number): Promise<void> {
+        if (scale == null) {
+            scale = -1;
+        }
+        return DisplayRule.setModel3DScale(this.id, scale).catch((err: Error) => {
+            return Promise.reject(MPError.create(JSON.parse(err.message)));
+        });
+    }
+
+    /**
+     * Get the 3D model's zoom from value.
+     * @returns Promise<number>
+     */
+    public async getModel3DZoomFrom(): Promise<number> {
+        return DisplayRule.getModel3DZoomFrom(this.id).catch((err: Error) => {
+            return Promise.reject(MPError.create(JSON.parse(err.message)));
+        });
+    }
+
+    /**
+     * Set the 3D model's zoom from value.
+     * @param zoomFrom number
+     * @returns Promise<void>
+     */
+    public async setModel3DZoomFrom(zoomFrom: number): Promise<void> {
+        if (zoomFrom == null) {
+            zoomFrom = -1;
+        }
+        return DisplayRule.setModel3DZoomFrom(this.id, zoomFrom).catch((err: Error) => {
+            return Promise.reject(MPError.create(JSON.parse(err.message)));
+        });
+    }
+
+    /**
+     * Get the 3D model's zoom to value.
+     * @returns Promise<number>
+     */
+    public async getModel3DZoomTo(): Promise<number> {
+        return DisplayRule.getModel3DZoomTo(this.id).catch((err: Error) => {
+            return Promise.reject(MPError.create(JSON.parse(err.message)));
+        });
+    }
+
+    /**
+     * Set the 3D model's zoom to value.
+     * @param zoomTo number
+     * @returns Promise<void>
+     */
+    public async setModel3DZoomTo(zoomTo: number): Promise<void> {
+        if (zoomTo == null) {
+            zoomTo = -1;
+        }
+        return DisplayRule.setModel3DZoomTo(this.id, zoomTo).catch((err: Error) => {
+            return Promise.reject(MPError.create(JSON.parse(err.message)));
+        });
+    }
+
+    /**
+     * Get the 3D model's visibility.
+     * @returns Promise<boolean>
+     */
+    public async isModel3DVisible(): Promise<boolean> {
+        return DisplayRule.isModel3DVisible(this.id).catch((err: Error) => {
+            return Promise.reject(MPError.create(JSON.parse(err.message)));
+        });
+    }
+
+    /**
+     * Set the 3D model's visibility.
+     * @param visible boolean
+     * @returns Promise<void>
+     */
+    public async setModel3DVisible(visible: boolean): Promise<void> {
+        return DisplayRule.setModel3DVisible(this.id, JSON.stringify(visible)).catch((err: Error) => {
+            return Promise.reject(MPError.create(JSON.parse(err.message)));
+        });
     }
 
     /**

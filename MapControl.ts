@@ -10,6 +10,8 @@ import {
 } from "../../index"
 import { EventNames } from './EventNames';
 import MPHighlightBehavior from './MPHighlightBehavior';
+import { MPSelectionMode } from './MPSelectionMode';
+import { MPFeatureType } from './MPFeatureTypes';
 
 
 const { MapControlModule } = NativeModules;
@@ -900,5 +902,57 @@ export default class MapControl {
             textSize = -1;
         } 
         return MapControlModule.setLabelOptions(textSize, color, showHalo).then(() => Promise.resolve());
+    }
+
+    /**
+     * Set the selection mode for buildings.
+     *
+     * @public
+     * @param selectionMode
+     */
+    public setBuildingSelectionMode(selectionMode: MPSelectionMode): Promise<void> {
+        return MapControlModule.setBuildingSelectionMode(selectionMode);
+    }
+
+    /**
+     * Get the selection mode for buildings.
+     *
+     * @public
+     */
+    public getBuildingSelectionMode(): Promise<MPSelectionMode> {
+        return MapControlModule.getBuildingSelectionMode();
+    }
+
+    /**
+     * Set the selection mode for floors.
+     *
+     * @public
+     * @param selectionMode
+     */
+    public setFloorSelectionMode(selectionMode: MPSelectionMode): Promise<void> {
+        return MapControlModule.setFloorSelectionMode(selectionMode);
+    }
+
+    /**
+     * Get the selection mode for floors.
+     *
+     * @public
+     */
+    public getFloorSelectionMode(): Promise<MPSelectionMode> {
+        return MapControlModule.getFloorSelectionMode();
+    }
+
+    /**
+     * Set features to hide on the map.
+     */
+    public setHiddenFeatures(features: MPFeatureType[]): Promise<void> {
+        return MapControlModule.setHiddenFeatures(JSON.stringify(features));
+    }
+
+    /**
+     * Get features that are hidden on the map.
+     */
+    public getHiddenFeatures(): Promise<MPFeatureType[]> {
+        return MapControlModule.getHiddenFeatures().then((features: string) => JSON.parse(features));
     }
 }

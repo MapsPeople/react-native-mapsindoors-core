@@ -101,10 +101,18 @@ export default class MPDirectionsService {
      * @async
      * @param {MPPoint} origin
      * @param {MPPoint} destination
+     * @param {MPPoint[]} [stops=null]
+     * @param {boolean} [optimze=false]
      * @returns {Promise<MPRoute>}
      */
-    public async getRoute(origin: MPPoint, destination: MPPoint): Promise<MPRoute> {
-        let res = await DirectionsService.getRoute(JSON.stringify(origin), JSON.stringify(destination), this.id);
+    public async getRoute(origin: MPPoint, destination: MPPoint, stops: MPPoint[] = null, optimze: boolean = false): Promise<MPRoute> {
+        var res;
+        if (stops === null) {
+            res = await DirectionsService.getRoute(JSON.stringify(origin), JSON.stringify(destination), stops, optimze, this.id);
+        }else {
+            let stopsAsJson = stops.map(stop => JSON.stringify(stop));
+            res = await DirectionsService.getRoute(JSON.stringify(origin), JSON.stringify(destination), stopsAsJson, optimze, this.id);
+        }
         if (res.route !== undefined) {
             return Promise.resolve(MPRoute.create(JSON.parse(res.route)));
         } else {

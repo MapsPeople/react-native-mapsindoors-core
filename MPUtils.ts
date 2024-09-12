@@ -166,4 +166,9 @@ export default class MPUtils {
     static async setWallOpacity(opacity: number): Promise<void> {
         return UtilsModule.setWallOpacity(opacity);
     }
+
+    static async setSelectable(id: string, selectable: boolean): Promise<void> {
+        return UtilsModule.setSelectable(id, selectable);
+    }
+    
 }

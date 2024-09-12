@@ -1,6 +1,7 @@
 import { Platform } from "react-native";
 import { MPPoint, MPDataField, MPPointParams } from "../../index";
 import { MPEntityInfo } from "./MPEntityInfo";
+import MPLocationSettings from "./MPLocationSettings";
 
 /**
  * Internal - Documentation will follow.
@@ -55,6 +56,7 @@ export default class MPPropertyData extends MPEntityInfo {
         readonly locationType?: string,
         readonly bookable?: boolean,
         readonly anchor?: MPPoint,
+        public locationSettings?: MPLocationSettings,
     ) { super(name, aliases, fields, undefined) }
 
     /**
@@ -65,7 +67,7 @@ export default class MPPropertyData extends MPEntityInfo {
      * @param {MPPropertyDataParams} object
      * @returns {MPPropertyData}
      */
-    public static create(object: MPPropertyDataParams): MPPropertyData {
+    public static create(object: MPPropertyDataParams, id?: string): MPPropertyData {
         var floor;
         if (Platform.OS === 'ios') {
             floor = object?.floor as number;
@@ -88,10 +90,11 @@ export default class MPPropertyData extends MPEntityInfo {
             object?.activeFrom,
             object?.activeTo,
             object?.contact,
-            object?.imageUrl,
+            object?.imageURL,
             object?.locationType,
             object?.bookable,
             MPPoint.create(object?.anchor),
+            object?.locationSettings && id ? MPLocationSettings.create(id, object?.locationSettings) : undefined,
         );
     }
 }
@@ -193,7 +196,7 @@ export interface MPPropertyDataParams {
      *
      * @type {?string}
      */
-    imageUrl?: string,
+    imageURL?: string,
     /**
      * Internal - Documentation will follow.
      *
@@ -212,4 +215,10 @@ export interface MPPropertyDataParams {
      * @type {?MPPointParams}
      */
     anchor?: MPPointParams,
+    /**
+     * Internal - Documentation will follow.
+     *
+     * @type {?MPLocationSettings}
+     */
+    locationSettings?: MPLocationSettings,
 }

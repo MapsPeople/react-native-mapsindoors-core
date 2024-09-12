@@ -2,6 +2,7 @@ import { Platform } from "react-native";
 import { MPGeometry, MPPoint, MPPolygon, MPBuilding, MPVenue, MPMultiPolygon, MPBounds, MPLocationType, MPLocationPropertyNames } from "../../index";
 import MPEntity from "./MPEntity";
 import MPPropertyData from "./MPPropertyData";
+import MPLocationSettings from "./MPLocationSettings";
 
 /**
  * A MapsIndoors geographical entity. A location can exist anywhere,
@@ -119,11 +120,15 @@ export default class MPLocation extends MPEntity {
             }
         }
 
+        if (object && object.properties && Platform.OS === 'ios') {
+            object.properties.locationSettings = object.locationSettings
+        }
+
         return new MPLocation(
             object?.id,
             object?.restrictions,
             geo,
-            MPPropertyData.create(object?.properties),
+            MPPropertyData.create(object?.properties, object?.id),
         );
 
     }
@@ -281,6 +286,25 @@ export default class MPLocation extends MPEntity {
      */
     public isBookable(): boolean {
         return this.properties?.bookable ? this.properties.bookable : false;
+    }
+
+    /**
+     * Set the location's selectable flag.
+     */
+    set selectable(selectable: boolean | undefined) {
+        if (this.properties?.locationSettings) {
+            this.properties.locationSettings.selectable = selectable;
+        }else if (this.properties) { 
+            this.properties.locationSettings = MPLocationSettings.create(this.name, { selectable });
+            this.properties.locationSettings.selectable = selectable;
+        }
+    }
+
+    /**
+     * Get the location's selectable flag.
+     */
+    get selectable(): boolean | null {
+        return this.properties?.locationSettings?.selectable ?? null;
     }
 
     /**

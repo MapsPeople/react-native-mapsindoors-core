@@ -1,6 +1,7 @@
 import { EmitterSubscription, NativeEventEmitter, NativeModules } from 'react-native';
 import { MPCameraViewFitMode, MPError, MPRoute, OnLegSelectedListener } from "../../index";
 import { EventNames } from './EventNames';
+import { RouteStopIconConfig } from './RouteStopIconConfig';
 
 const { DirectionsRenderer } = NativeModules;
 
@@ -12,6 +13,11 @@ const { DirectionsRenderer } = NativeModules;
  * @typedef {MPDirectionsRenderer}
  */
 export default class MPDirectionsRenderer {
+
+    private _defaultRouteStopIcon?: RouteStopIconConfig
+    get defaultRouteStopIcon(): RouteStopIconConfig {
+        return this._defaultRouteStopIcon;
+    }
     /**
      * Listener for leg selection events.
      *
@@ -81,10 +87,31 @@ export default class MPDirectionsRenderer {
      * @public
      * @async
      * @param {?MPRoute} [route]
+     * @param {RouteStopIconConfig[]} [stopIcons]
+     * @param {?number} [legIndex] Overwrites the starting leg index, when rendering the route
      * @returns {Promise<void>}
      */
-    public async setRoute(route: MPRoute): Promise<void> {
-        await DirectionsRenderer.setRoute(JSON.stringify(route))
+    public async setRoute(route: MPRoute, stopIcons: Map<number, RouteStopIconConfig> = null, legIndex: number = 0): Promise<void> {
+        var iconsAsString = new Map<number, string>();
+        if (stopIcons !== null) {
+            stopIcons.forEach((icon, index) => {
+                iconsAsString.set(index, icon.getImage().toString());
+            });
+        }
+        await DirectionsRenderer.setRoute(JSON.stringify(route), JSON.stringify(Object.fromEntries(iconsAsString.entries())), legIndex);
+    }
+
+    /**
+     * Set the default icon for route stops.
+     *
+     * @public
+     * @async
+     * @param {RouteStopIconConfig} icon
+     * @returns {Promise<void>}
+     */
+    public async setDefaultRouteStopIcon(icon: RouteStopIconConfig): Promise<void> {
+        this._defaultRouteStopIcon = icon;
+        await DirectionsRenderer.setDefaultRouteStopIcon(icon.getImage().toString());
     }
 
     /**
@@ -179,8 +206,13 @@ export default class MPDirectionsRenderer {
                 cameraFitMode = 2;
                 break;
             }
+            case MPCameraViewFitMode.none: {
+                cameraFitMode = 3;
+                break;
+            }
         }
-        await DirectionsRenderer.setCameraViewFitMode(cameraFitMode);
+        
+        return await DirectionsRenderer.setCameraViewFitMode(cameraFitMode);
     }
 
     /**

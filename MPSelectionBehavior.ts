@@ -43,11 +43,11 @@ export default class MPSelectionBehavior {
      */
     static create(object: MPSelectionBehaviorParams): MPSelectionBehavior {
         return new MPSelectionBehavior(
-            object?.allowFloorChange ? object.allowFloorChange : true,
-            object?.moveCamera ? object.moveCamera : true,
-            object?.animationDuration ? object.animationDuration : 500,
-            object?.showInfoWindow ? object.showInfoWindow : true,
-            object?.zoomToFit ? object.zoomToFit : true
+            object?.allowFloorChange ?? true,
+            object?.moveCamera ?? true,
+            object?.animationDuration ?? 500,
+            object?.showInfoWindow ?? true,
+            object?.zoomToFit ?? true
         );
     }
 }

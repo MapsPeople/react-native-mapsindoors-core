@@ -45,11 +45,11 @@ export default class MPHighlightBehavior {
      */
     public static create(object?: MPHighlightBehaviorParams): MPHighlightBehavior {
         return new MPHighlightBehavior(
-            object?.allowFloorChange ? object.allowFloorChange : false,
-            object?.moveCamera ? object.moveCamera : false,
-            object?.animationDuration ? object.animationDuration : 0,
-            object?.showInfoWindow ? object.showInfoWindow : false,
-            object?.zoomToFit ? object?.zoomToFit : true
+            object?.allowFloorChange ?? false,
+            object?.moveCamera ?? false,
+            object?.animationDuration ?? 0,
+            object?.showInfoWindow ?? false,
+            object?.zoomToFit ?? true
         );
     };
 }

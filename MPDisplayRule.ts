@@ -4,6 +4,7 @@ import { MPIconPlacement } from './MPIconPlacement';
 import { MPLabelType } from './MPLabelType';
 import { MPBadgePosition } from './MPBadgePosition';
 import MPLabelGraphic from './MPLabelGraphic';
+import { MPLabelPosition } from './MPLabelPosition';
 const { DisplayRule } = NativeModules;
 
 
@@ -1305,6 +1306,27 @@ export default class MPDisplayRule {
             bearing = -1;
         }
         return DisplayRule.setLabelStyleBearing(this.id, bearing).catch((err: Error) => {
+            return Promise.reject(MPError.create(JSON.parse(err.message)));
+        });
+    }
+
+    /**
+     * Get the label's position
+     * @returns Promise<MPLabelPosition>
+     */
+    public async getLabelStylePosition(): Promise<MPLabelPosition> {
+        return DisplayRule.getLabelStylePosition(this.id).catch((err: Error) => {
+            return Promise.reject(MPError.create(JSON.parse(err.message)));
+        });
+    }
+
+    /**
+     * Set the label's position
+     * @param position MPLabelPosition
+     * @returns Promise<void>
+     */
+    public async setLabelStylePosition(position: MPLabelPosition): Promise<void> {
+        return DisplayRule.setLabelStylePosition(this.id, position.valueOf()).catch((err: Error) => {
             return Promise.reject(MPError.create(JSON.parse(err.message)));
         });
     }

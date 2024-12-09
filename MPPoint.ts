@@ -139,7 +139,7 @@ export default class MPPoint extends MPGeometry {
     public toJSON(): MPPointParams {
         return {
             type: this.type,
-            coordinates: [this.longitude, this.latitude, this.floorIndex ? this.floorIndex : 0],
+            coordinates: [this.longitude, this.latitude, this.floorIndex ?? 0],
         };
     }
 }

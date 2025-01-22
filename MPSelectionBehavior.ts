@@ -1,4 +1,5 @@
 import MapControl from "../../index";
+import { Platform } from 'react-native';
 
 /**
  * Sets a behavior for the map when calling {@link MapControl#selectLocation}.
@@ -25,6 +26,7 @@ export default class MPSelectionBehavior {
      * @param {number} animationDuration
      * @param {boolean} showInfoWindow
      * @param {boolean} zoomToFit
+     * @param {number} maxZoom
      */
     private constructor(
         public allowFloorChange: boolean,
@@ -32,6 +34,7 @@ export default class MPSelectionBehavior {
         public animationDuration: number,
         public showInfoWindow: boolean,
         public zoomToFit: boolean,
+        public maxZoom?: number
     ) { }
 
     /**
@@ -42,12 +45,23 @@ export default class MPSelectionBehavior {
      * @returns {MPSelectionBehavior}
      */
     static create(object: MPSelectionBehaviorParams): MPSelectionBehavior {
+        if(Platform.OS === 'ios') {
+            return new MPSelectionBehavior(
+                object?.allowFloorChange ?? false,
+                object?.moveCamera ?? false,
+                object?.animationDuration ?? 0,
+                object?.showInfoWindow ?? false,
+                object?.zoomToFit ?? true,
+                object?.maxZoom ?? 999
+            );
+        }
         return new MPSelectionBehavior(
             object?.allowFloorChange ?? true,
             object?.moveCamera ?? true,
             object?.animationDuration ?? 500,
             object?.showInfoWindow ?? true,
-            object?.zoomToFit ?? true
+            object?.zoomToFit ?? true,
+            object?.maxZoom
         );
     }
 }
@@ -90,4 +104,11 @@ export interface MPSelectionBehaviorParams {
      * @type {?boolean}
      */
     zoomToFit?: boolean,
+
+    /**
+     * The maximum zoom level to zoom to when zoomToFit is enabled.
+     *
+     * @type {?number}
+     */
+    maxZoom?: number
 }

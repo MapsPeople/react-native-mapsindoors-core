@@ -61,7 +61,7 @@ export default class MPFloor extends MPEntity {
     public static create(object: MPFloorParams): MPFloor {
         var multiPolygon;
         if (Platform.OS === 'ios') {
-            multiPolygon = MPMultiPolygon.create({coordinates: object?.geometry, bbox: [].concat(object?.entityBounds?.northeast, object?.entityBounds?.southwest)});
+            multiPolygon = MPMultiPolygon.create({coordinates: object?.geometry, bbox: [].concat(object?.entityBounds?.southwest, object?.entityBounds?.northeast)});
         }else {
             multiPolygon = MPMultiPolygon.create(object?.geometry);
         }

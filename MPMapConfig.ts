@@ -127,6 +127,13 @@ export default class MPMapConfig {
     public readonly showRoadLabels?: boolean;
 
     /**
+     * Set a specific map style for Mapbox
+     * Mapbox specific
+     * The default value is undefined, and uses the default style. useDefaultMapsIndoorsStyle should be false for this to take effect.
+     */
+    public mapboxMapStyle?: string;
+
+    /**
      * Creates an instance of MPMapConfig.
      *
      * @constructor
@@ -147,6 +154,7 @@ export default class MPMapConfig {
         this.mapsIndoorsTransitionLevel = params.mapsIndoorsTransitionLevel;
         this.showMapMarkers = params.showMapMarkers;
         this.showRoadLabels = params.showRoadLabels;
+        this.mapboxMapStyle = params.mapboxMapStyle;
     }
 }
 
@@ -262,4 +270,11 @@ export interface MPMapConfigParams {
      * @type {boolean}
      */
     showRoadLabels?: boolean,
+    /**
+     * Set a specific map style for Mapbox
+     * Mapbox specific
+     * The default value is undefined, and uses the default style. useDefaultMapsIndoorsStyle should be false for this to take effect.
+     * @type {string}
+     */
+    mapboxMapStyle?: string,
 }

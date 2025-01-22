@@ -24,6 +24,8 @@ export default class MPSolutionConfig {
      * @param {MPSettings3D} settings3D
      * @param {?boolean} [_enableClustering]
      * @param {?MPCollisionHandling} [_mpCollisionHandling]
+     * @param {?boolean} [_isNewSelection]
+     * @param {?number} [_automatedZoomLimit]
      */
     private constructor(
         public readonly id: string,
@@ -32,6 +34,7 @@ export default class MPSolutionConfig {
         private _enableClustering?: boolean,
         private _mpCollisionHandling?: MPCollisionHandling,
         private _isNewSelection?: boolean,
+        private _automatedZoomLimit?: number,
     ) { }
 
 
@@ -51,6 +54,7 @@ export default class MPSolutionConfig {
             object?.enableClustering,
             object?.collisionHandling,
             object?.isNewSelection,
+            object?.automatedZoomLimit,
         );
     }
 
@@ -63,6 +67,21 @@ export default class MPSolutionConfig {
     public set collisionHandling(collisionHandling: MPCollisionHandling) {
         this._mpCollisionHandling = collisionHandling;
         MPUtils.setCollisionHandling(collisionHandling);
+    }
+
+    /**
+     * Set the automated zoom limit.
+     * 
+     * @public
+     * @type {number}
+     */
+    public set automatedZoomLimit(automatedZoomLimit: number) {
+        this._automatedZoomLimit = automatedZoomLimit;
+        if (automatedZoomLimit == null) {
+            MPUtils.setAutomatedZoomLimit(-1);
+        }else {
+            MPUtils.setAutomatedZoomLimit(automatedZoomLimit);
+        }
     }
 
     /**
@@ -159,4 +178,11 @@ export interface MPSolutionConfigParams {
      * @type {MPLocationSettings}
      */
     locationSettings: MPLocationSettings,
+
+    /**
+     * Automated zoom limit
+     * 
+     * @type {number}
+     */
+    automatedZoomLimit?: number,
 }

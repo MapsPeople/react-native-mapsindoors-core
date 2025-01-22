@@ -66,7 +66,7 @@ export default class MPBuilding extends MPEntity {
         var polygon;
 
         if(Platform.OS === 'ios') {
-            polygon = MPPolygon.create({coordinates: object?.geometry, bbox: [].concat(object?.boundingBox?.northeast, object?.boundingBox?.southwest)});
+            polygon = MPPolygon.create({coordinates: object?.geometry, bbox: [].concat(object?.boundingBox?.southwest, object?.boundingBox?.northeast)});
         }else {
             polygon = MPPolygon.create(object?.geometry);
         }
@@ -117,7 +117,6 @@ export default class MPBuilding extends MPEntity {
     public get position(): MPPoint {
         return this.anchor;
     }
-
     
     /**
      * Overload from MPEntity, will return false.

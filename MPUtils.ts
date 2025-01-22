@@ -170,5 +170,9 @@ export default class MPUtils {
     static async setSelectable(id: string, selectable: boolean): Promise<void> {
         return UtilsModule.setSelectable(id, selectable);
     }
-    
+
+    static async setAutomatedZoomLimit(automatedZoomLimit?: number): Promise<void> {
+        return UtilsModule.setAutomatedZoomLimit(automatedZoomLimit);
+    }
+
 }

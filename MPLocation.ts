@@ -95,10 +95,10 @@ export default class MPLocation extends MPEntity {
                         geo = MPPoint.create(object?.geometry);
                         break;
                     case MPGeometry.polygon:
-                        geo = MPPolygon.create({coordinates: object?.geometry, bbox: [].concat(object?.entityBounds?.northeast, object?.entityBounds?.southwest)});
+                        geo = MPPolygon.create({coordinates: object?.geometry, bbox: [].concat(object?.entityBounds?.southwest, object?.entityBounds?.northeast)});
                         break;
                     case MPGeometry.multiPolygon:
-                        geo = MPMultiPolygon.create({coordinates: object?.geometry, bbox: [].concat(object?.entityBounds?.northeast, object?.entityBounds?.southwest)})
+                        geo = MPMultiPolygon.create({coordinates: object?.geometry, bbox: [].concat(object?.entityBounds?.southwest, object?.entityBounds?.northeast)})
                         break;
                     default: 
                         break;

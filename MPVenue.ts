@@ -58,7 +58,7 @@ export default class MPVenue extends MPEntity {
         var polygon;
 
         if (Platform.OS === 'ios') {
-            polygon = MPPolygon.create({coordinates: object?.geometry, bbox: [].concat(object?.bbox?.northeast, object?.bbox?.southwest)});
+            polygon = MPPolygon.create({coordinates: object?.geometry, bbox: [].concat(object?.bbox?.southwest, object?.bbox?.northeast)});
         }else {
             polygon = MPPolygon.create(object?.geometry);
         }

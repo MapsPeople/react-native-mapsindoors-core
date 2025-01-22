@@ -1,4 +1,5 @@
 import MapControl from "../../index";
+import { Platform } from 'react-native';
 
 /**
  * Sets a behavior for the map when calling {@link MapControl#setFilter}.
@@ -26,6 +27,7 @@ export default class MPFilterBehavior {
      * @param {number} animationDuration How long the camera movement should be animated for, set to 0 disables animation.
      * @param {boolean} showInfoWindow Whether to open the info window if a single result is returned.
      * @param {boolean} zoomToFit Whether the filtering is allowed to zoom in/out the camera.
+     * @param {number} maxZoom The maximum zoom level to zoom to when zoomToFit is enabled.
      */
     private constructor(
         public allowFloorChange: boolean,
@@ -33,6 +35,7 @@ export default class MPFilterBehavior {
         public animationDuration: number,
         public showInfoWindow: boolean,
         public zoomToFit: boolean,
+        public maxZoom?: number
     ) { }
 
     /**
@@ -44,12 +47,23 @@ export default class MPFilterBehavior {
      * @returns {MPFilterBehavior}
      */
     public static create(object?: MPFilterBehaviorParams): MPFilterBehavior {
+        if(Platform.OS === 'ios') {
+            return new MPFilterBehavior(
+                object?.allowFloorChange ?? false,
+                object?.moveCamera ?? false,
+                object?.animationDuration ?? 0,
+                object?.showInfoWindow ?? false,
+                object?.zoomToFit ?? true,
+                object?.maxZoom ?? 999
+            );
+        }
         return new MPFilterBehavior(
             object?.allowFloorChange ? object.allowFloorChange : false,
             object?.moveCamera ? object.moveCamera : false,
             object?.animationDuration ? object.animationDuration : 0,
             object?.showInfoWindow ? object.showInfoWindow : false,
-            object?.zoomToFit ? object?.zoomToFit : true
+            object?.zoomToFit ? object?.zoomToFit : true,
+            object?.maxZoom
         );
     };
 }
@@ -92,4 +106,10 @@ export interface MPFilterBehaviorParams {
      * @type {?boolean}
      */
     zoomToFit?: boolean,
+    /**
+     * The maximum zoom level to zoom to when zoomToFit is enabled.
+     *
+     * @type {?number}
+     */
+    maxZoom?: number
 }

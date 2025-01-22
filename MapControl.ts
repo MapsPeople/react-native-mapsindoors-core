@@ -316,8 +316,11 @@ export default class MapControl {
      * @param {MPEntity} entity The entity to move to.
      * @returns {Promise<void>}
      */
-    public async goTo(entity: MPEntity): Promise<void> {
-        return MapControlModule.goTo(JSON.stringify(entity), entity.type).then(() => {});
+    public async goTo(entity: MPEntity, maxZoom?: number): Promise<void> {
+        if (maxZoom) {
+            return MapControlModule.goTo(JSON.stringify(entity), entity.type, maxZoom);
+        }
+        return MapControlModule.goTo(JSON.stringify(entity), entity.type);
     }
 
     /**

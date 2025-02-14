@@ -320,7 +320,7 @@ export default class MapControl {
         if (maxZoom) {
             return MapControlModule.goTo(JSON.stringify(entity), entity.type, maxZoom);
         }
-        return MapControlModule.goTo(JSON.stringify(entity), entity.type);
+        return MapControlModule.goTo(JSON.stringify(entity), entity.type, -999);
     }
 
     /**

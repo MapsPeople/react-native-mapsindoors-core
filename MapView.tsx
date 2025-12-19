@@ -1,6 +1,6 @@
 import * as React from 'react'
 import { useEffect, useRef } from 'react';
-import { Platform, UIManager, findNodeHandle, requireNativeComponent } from "react-native";
+import { Platform, UIManager, ViewProps, findNodeHandle, requireNativeComponent } from "react-native";
 import MPCameraPosition from './MPCameraPosition';
 
 const createFragment = (viewId: number | null, camera?: MPCameraPosition, showCompass?: boolean, mapboxMapStyle?: String) => {
@@ -16,7 +16,7 @@ const createFragment = (viewId: number | null, camera?: MPCameraPosition, showCo
     );
 }
 
-const MapView = ({ style, camera, showCompass, mapboxMapStyle }: { style: any, camera?: MPCameraPosition, showCompass?: boolean, mapboxMapStyle?: string}) => {
+const MapView = ({ style, camera, showCompass, mapboxMapStyle }: { style: any, camera?: MPCameraPosition, showCompass?: boolean, mapboxMapStyle?: string, [key: string]: any }) => {
     const ref = useRef(null);
 
     useEffect(() => {
@@ -25,11 +25,8 @@ const MapView = ({ style, camera, showCompass, mapboxMapStyle }: { style: any, c
     }, []);
 
     return (<MapsIndoorsViewManager
-        style={style}
-        ref={ref}
-        camera={camera}
-        showCompass={showCompass}
-        mapboxMapStyle={mapboxMapStyle} />);
+        {...{ style, camera, showCompass, mapboxMapStyle }}
+        ref={ref}/>);
 }
 
 const MapsIndoorsViewManager = requireNativeComponent('MapsIndoorsView');

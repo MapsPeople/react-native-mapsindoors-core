@@ -3,6 +3,8 @@ import { MPGeometry, MPPoint, MPPolygon, MPBuilding, MPVenue, MPMultiPolygon, MP
 import MPEntity from "./MPEntity";
 import MPPropertyData from "./MPPropertyData";
 import MPLocationSettings from "./MPLocationSettings";
+import { MPAdditionalDetail } from "./MPAdditionalDetail";
+import { MPDetailType } from "./MPDetailType";
 
 /**
  * A MapsIndoors geographical entity. A location can exist anywhere,
@@ -406,5 +408,33 @@ export default class MPLocation extends MPEntity {
                 return this.properties?.bookable;
             }
         }
+    }
+
+    /**
+     * Gets the location's additional details, if any
+     * @returns a list of additional details, or null if none were set
+     */
+    public getAdditionalDetails(): MPAdditionalDetail[] | null {
+        if (this.properties?.additionalDetails) {
+            // Return a readonly copy of the array to prevent external modifications
+            return [...this.properties.additionalDetails];
+        }
+        return null;
+    }
+
+    /**
+     * Gets a specific additional detail from the location's additional details
+     * @param type the type of the additional detail to get
+     * @returns the additional detail of the specified type, or null if it does not exist
+     */
+    public getAdditionalDetail(type: MPDetailType): MPAdditionalDetail | null {
+        if (this.properties?.additionalDetails) {
+            for (const detail of this.properties.additionalDetails) {
+                if (detail.detailType.toLowerCase() === type.toLowerCase() ) {
+                    return detail;
+                }
+            }
+        }
+        return null;
     }
 }

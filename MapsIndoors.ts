@@ -528,14 +528,28 @@ export default class MapsIndoors {
         });
     }
 
+    /**
+     * Add venues to the sync list.
+     * @param venues list of venueIds to add to sync.
+     * @returns 
+     */
     public static async addVenuesToSync(venues: string[]): Promise<void> {
         return MapsIndoorsModule.addVenuesToSync(venues);
     }
 
+    /**
+     * Remove venues from the sync list.
+     * @param venues List of venueIds to remove from sync.
+     * @returns 
+     */
     public static async removeVenuesToSync(venues: string[]): Promise<void> {
         return MapsIndoorsModule.removeVenuesToSync(venues);
     }
     
+    /**
+     * Get a list of venueIds that are synced.
+     * @returns Promise<string[]> A list of venueIds that are synced.
+     */
     public static async getSyncedVenues(): Promise<string[]> {
         return MapsIndoorsModule.getSyncedVenues().then((venues: string[]|null) => {
             if (venues === null || venues === undefined) {
@@ -544,5 +558,14 @@ export default class MapsIndoors {
                 return venues;
             }
         });
+    }
+
+    /**
+     * Cache all data for the current solution. Including tiles and images if present on the solution.
+     * @param apiKey The key to the MapsIndoors solution.
+     * @returns Promise<boolean> True if the caching was successful, otherwise false.
+     */
+    public static async cacheData(apiKey: String): Promise<boolean> {
+        return MapsIndoorsModule.cacheData(apiKey);
     }
 }

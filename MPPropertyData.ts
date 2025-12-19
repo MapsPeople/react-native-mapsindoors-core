@@ -2,6 +2,7 @@ import { Platform } from "react-native";
 import { MPPoint, MPDataField, MPPointParams } from "../../index";
 import { MPEntityInfo } from "./MPEntityInfo";
 import MPLocationSettings from "./MPLocationSettings";
+import { MPAdditionalDetail } from "./MPAdditionalDetail";
 
 /**
  * Internal - Documentation will follow.
@@ -36,6 +37,7 @@ export default class MPPropertyData extends MPEntityInfo {
      * @param {?string} [locationType]
      * @param {?boolean} [bookable]
      * @param {?MPPoint} [anchor]
+     * @param {?MPAdditionalDetail[]} [additionalDetails]
      */
     private constructor(
         name: string,
@@ -57,6 +59,7 @@ export default class MPPropertyData extends MPEntityInfo {
         readonly bookable?: boolean,
         readonly anchor?: MPPoint,
         public locationSettings?: MPLocationSettings,
+        readonly additionalDetails?: MPAdditionalDetail[],
     ) { super(name, aliases, fields, undefined) }
 
     /**
@@ -95,6 +98,7 @@ export default class MPPropertyData extends MPEntityInfo {
             object?.bookable,
             MPPoint.create(object?.anchor),
             object?.locationSettings && id ? MPLocationSettings.create(id, object?.locationSettings) : undefined,
+            object?.additionalDetails ? object.additionalDetails.map((detail: any) => MPAdditionalDetail.fromJson(detail)) : undefined,
         );
     }
 }
@@ -221,4 +225,10 @@ export interface MPPropertyDataParams {
      * @type {?MPLocationSettings}
      */
     locationSettings?: MPLocationSettings,
+    /**
+     * The location's additional details list
+     *
+     * @type {?any[]}
+     */
+    additionalDetails?: any[],
 }

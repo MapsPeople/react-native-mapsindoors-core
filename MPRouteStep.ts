@@ -103,73 +103,82 @@ export default class MPRouteStep {
  */
 export interface MPRouteStepParams {
     /**
-     * Description placeholder.
+     * The distance of the route step.
      *
      * @type {?MPRouteProperty}
      */
     distance?: MPRouteProperty,
     /**
-     * Description placeholder.
+     * The duration of the route step.
      *
      * @type {?MPRouteProperty}
      */
     duration?: MPRouteProperty,
     /**
-     * Description placeholder.
+     * An array of sub-steps for the route step.
      *
      * @type {?MPRouteStep[]}
      */
     steps?: MPRouteStep[],
     /**
-     * Description placeholder.
+     * An array of coordinates representing the geometry of the route step.
      *
      * @type {?MPRouteCoordinate[]}
      */
     geometry?: MPRouteCoordinate[],
     /**
-     * Description placeholder.
+     * The highway associated with the route step.
      *
      * @type {?string}
      */
     highway?: string,
     /**
-     * Description placeholder.
+     * The abutters associated with the route step.
      *
      * @type {?string}
      */
     abutters?: string,
     /**
-     * Description placeholder.
+     * The maneuver associated with the route step.
+     * 
+     * Possible values incldue:
+     * - "turn-left"
+     * - "turn-right"
+     * - "straight"
+     * - "uturn-left"
+     * - "uturn-right"
+     * - "turn-sharp-left"
+     * - "turn-sharp-right"
      *
      * @type {?string}
      */
     maneuver?: string,
     /**
-     * Description placeholder.
+     * The starting location of the route step.
      *
      * @type {?MPRouteCoordinate}
      */
     start_location?: MPRouteCoordinate,
     /**
-     * Description placeholder.
+     * The ending location of the route step.
      *
      * @type {?MPRouteCoordinate}
      */
     end_location?: MPRouteCoordinate,
     /**
-     * Description placeholder.
+     * Textual instructions for the step
      *
      * @type {?string}
      */
     html_instructions?: string,
     /**
-     * Description placeholder.
+     * The travel mode for the route step.
      *
      * @type {?string}
      */
     travel_mode?: string,
     /**
-     * Description placeholder.
+     * An array of available travel modes for the route step.
      *
      * @type {?string[]}
      */

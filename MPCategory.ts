@@ -16,11 +16,13 @@ export default class MPCategory {
      * @param {string} key The ID of the category.
      * @param {string} value The category's readable name.
      * @param {?Map<string, MPDataField>} [fields] The category's data fields.
+     * @param {?string[]} [childKeys] The keys of child categories.
      */
     private constructor(
         public readonly key: string,
         public readonly value: string,
-        public readonly fields?: Map<string, MPDataField>
+        public readonly fields?: Map<string, MPDataField>,
+        public readonly childKeys?: string[],
     ) { }
 
     /**
@@ -43,6 +45,7 @@ export default class MPCategory {
             object?.key,
             object?.value,
             fields,
+            object?.childKeys,
         );
     }
 }
@@ -73,4 +76,10 @@ export interface MPCategoryParams {
      * @type {?Map<string, MPDataField>}
      */
     fields?: Map<string, MPDataField>,
+    /** 
+     * The keys of child categories.
+     * 
+     * @type {?string[]}
+    */
+    childKeys?: string[],
 }

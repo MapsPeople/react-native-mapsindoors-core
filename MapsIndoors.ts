@@ -293,7 +293,7 @@ export default class MapsIndoors {
     }
 
     /**
-     * Retrieve the display rule with a given [@link name}.
+     * Retrieve the display rule with a given {@link name}.
      *
      * Requires that {@link load} has successfully executed.
      *

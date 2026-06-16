@@ -129,6 +129,21 @@ export default class MPDirectionsRenderer {
     }
 
     /**
+     * Set the colors of the route polyline.
+     *
+     * Colors are given as hex strings (e.g. "#3071D9").
+     *
+     * @public
+     * @async
+     * @param {string} foregroundColor the primary color (animated polyline)
+     * @param {string} backgroundColor the secondary color (static polyline)
+     * @returns {Promise<void>}
+     */
+    public async setPolylineColors(foregroundColor: string, backgroundColor: string): Promise<void> {
+        await DirectionsRenderer.setPolyLineColors(foregroundColor, backgroundColor);
+    }
+
+    /**
      * Enable/Disable the route end/start label buttons from showing on the route. Default is true
      *
      * @public

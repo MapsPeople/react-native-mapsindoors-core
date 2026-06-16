@@ -29,7 +29,7 @@ export default class MPDirectionsService {
      * @returns {Promise<MPDirectionsService>}
      */
     public static async create(): Promise<MPDirectionsService> {
-        return DirectionsService.create().then((resolve: string) => new MPDirectionsService(resolve));
+        return DirectionsService.createService().then((resolve: string) => new MPDirectionsService(resolve));
     }
 
     /**

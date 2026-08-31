@@ -26,6 +26,8 @@ export default class MPSolutionConfig {
      * @param {?MPCollisionHandling} [_mpCollisionHandling]
      * @param {?boolean} [_isNewSelection]
      * @param {?number} [_automatedZoomLimit]
+     * @param {?number} [_iconScaleZoomFrom]
+     * @param {?number} [_iconScaleZoomTo]
      */
     private constructor(
         public readonly id: string,
@@ -35,6 +37,8 @@ export default class MPSolutionConfig {
         private _mpCollisionHandling?: MPCollisionHandling,
         private _isNewSelection?: boolean,
         private _automatedZoomLimit?: number,
+        private _iconScaleZoomFrom?: number,
+        private _iconScaleZoomTo?: number,
     ) { }
 
 
@@ -55,6 +59,8 @@ export default class MPSolutionConfig {
             object?.collisionHandling,
             object?.isNewSelection,
             object?.automatedZoomLimit,
+            object?.iconScaleZoomFrom,
+            object?.iconScaleZoomTo,
         );
     }
 
@@ -131,6 +137,43 @@ export default class MPSolutionConfig {
     public set selectable(selectable: boolean | undefined) {
         this.locationSettings.selectable = selectable;
     }
+
+    /**
+     * Get the bottom of this solution's icon-scale zoom band, in MapsIndoors zoom.
+     *
+     * Below this zoom level every icon renders at its normal size; from here up to
+     * {@link MPSolutionConfig.iconScaleZoomTo} it grows towards its display rule's
+     * {@link MPDisplayRule.getIconZoomFactor}.
+     *
+     * Returns exactly what the solution stored, `undefined` included. Absence of the band **is**
+     * the signal that this solution has not opted in to zoom-responsive icon scaling, so it is
+     * never default-hydrated: do not read an absent bound as 18.
+     *
+     * Read-only. The band is a solution-level setting authored in the MapsIndoors CMS; the native
+     * SDKs' runtime band setters are not exposed through this wrapper.
+     *
+     * @public
+     * @readonly
+     * @type {number | undefined}
+     */
+    public get iconScaleZoomFrom(): number | undefined {
+        return this._iconScaleZoomFrom;
+    }
+
+    /**
+     * Get the top of this solution's icon-scale zoom band, in MapsIndoors zoom.
+     *
+     * At and above this zoom level every icon renders at its display rule's
+     * {@link MPDisplayRule.getIconZoomFactor} times its normal size.
+     *
+     * @public
+     * @readonly
+     * @type {number | undefined}
+     * @see {@link MPSolutionConfig.iconScaleZoomFrom}
+     */
+    public get iconScaleZoomTo(): number | undefined {
+        return this._iconScaleZoomTo;
+    }
 }
 
 /**
@@ -185,4 +228,21 @@ export interface MPSolutionConfigParams {
      * @type {number}
      */
     automatedZoomLimit?: number,
+
+    /**
+     * Bottom of the icon-scale zoom band, in MapsIndoors zoom, exactly as the solution stored it.
+     *
+     * Nullable and never default-hydrated: absence of the band is the signal that the solution has
+     * not opted in to zoom-responsive icon scaling.
+     *
+     * @type {?number}
+     */
+    iconScaleZoomFrom?: number,
+
+    /**
+     * Top of the icon-scale zoom band, in MapsIndoors zoom, exactly as the solution stored it.
+     *
+     * @type {?number}
+     */
+    iconScaleZoomTo?: number,
 }

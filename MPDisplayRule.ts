@@ -18,6 +18,45 @@ const { DisplayRule } = NativeModules;
 export default class MPDisplayRule {
 
     /**
+     * Exclusive lower bound for {@link MPDisplayRule.setIconZoomFactor}.
+     *
+     * Zero would collapse the icon at the top of the solution's icon-scale zoom band, and a
+     * negative factor is not expressible as a size at all.
+     *
+     * @private
+     * @static
+     * @readonly
+     * @type {number}
+     */
+    private static readonly minIconZoomFactorExclusive: number = 0;
+
+    /**
+     * Inclusive upper bound for {@link MPDisplayRule.setIconZoomFactor}, matching the range the
+     * MapsIndoors API validates and the native SDKs enforce.
+     *
+     * @private
+     * @static
+     * @readonly
+     * @type {number}
+     */
+    private static readonly maxIconZoomFactor: number = 4;
+
+    /**
+     * Whether a value is inside the icon zoom factor contract: finite and `> 0 && <= 4`.
+     *
+     * @private
+     * @static
+     * @param {number} value
+     * @returns {boolean}
+     */
+    private static isValidIconZoomFactor(value: number): boolean {
+        return typeof value === "number"
+            && Number.isFinite(value)
+            && value > MPDisplayRule.minIconZoomFactorExclusive
+            && value <= MPDisplayRule.maxIconZoomFactor;
+    }
+
+    /**
      * Creates an instance of MPDisplayRule.
      *
      * @constructor
@@ -1099,6 +1138,63 @@ export default class MPDisplayRule {
             iconScale = -1;
         }
         return DisplayRule.setIconScale(this.id, iconScale).catch((err: Error) => {
+            return Promise.reject(MPError.create(JSON.parse(err.message)));
+        });
+    }
+
+    /**
+     * Get the zoom factor of the icon.
+     *
+     * The multiplier the icon grows by across the solution's icon-scale zoom band
+     * ({@link MPSolutionConfig.iconScaleZoomFrom} to {@link MPSolutionConfig.iconScaleZoomTo}).
+     * `1.0` is neutral: the interpolation collapses to an identity and the icon renders exactly as
+     * it does without this feature, at every zoom level.
+     *
+     * @public
+     * @async
+     * @returns {Promise<number>}
+     */
+    public async getIconZoomFactor(): Promise<number> {
+        return DisplayRule.getIconZoomFactor(this.id).catch((err: Error) => {
+            return Promise.reject(MPError.create(JSON.parse(err.message)));
+        });
+    }
+
+    /**
+     * Set the zoom factor of the icon, default `1.0`.
+     *
+     * Unlike {@link MPDisplayRule.setIconScale} this does not re-rasterise the icon: the map engine
+     * applies the factor at draw time as a zoom-interpolated size, so it never invalidates the icon
+     * cache.
+     *
+     * Must be finite and within `> 0 && <= 4`, the same range the MapsIndoors API validates. This
+     * setter bypasses the API entirely, and an out-of-range factor would either hide icons (zero or
+     * negative) or produce a layout value the renderer cannot evaluate (NaN, infinity), so an
+     * invalid value is ignored and the rule keeps its current factor rather than being clamped into
+     * a configuration nobody authored. Pass `null` to clear the override.
+     *
+     * Rendered by the Mapbox provider only. Zoom-responsive icon scaling is a documented no-op on
+     * Google Maps in this version, on every platform: the value is still stored on the display rule
+     * and read back by {@link MPDisplayRule.getIconZoomFactor}, but the Google Maps renderer
+     * ignores it.
+     *
+     * @public
+     * @async
+     * @param {number} iconZoomFactor
+     * @returns {Promise<void>}
+     */
+    public async setIconZoomFactor(iconZoomFactor: number): Promise<void> {
+        if (iconZoomFactor == null) {
+            return DisplayRule.setIconZoomFactor(this.id, -1).catch((err: Error) => {
+                return Promise.reject(MPError.create(JSON.parse(err.message)));
+            });
+        }
+        if (!MPDisplayRule.isValidIconZoomFactor(iconZoomFactor)) {
+            console.warn(`Ignoring invalid icon zoom factor: ${iconZoomFactor}. Must be finite and within `
+                + `${MPDisplayRule.minIconZoomFactorExclusive} < factor <= ${MPDisplayRule.maxIconZoomFactor}.`);
+            return Promise.resolve();
+        }
+        return DisplayRule.setIconZoomFactor(this.id, iconZoomFactor).catch((err: Error) => {
             return Promise.reject(MPError.create(JSON.parse(err.message)));
         });
     }

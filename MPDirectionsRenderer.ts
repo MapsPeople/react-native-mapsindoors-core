@@ -1,9 +1,19 @@
 import { EmitterSubscription, NativeEventEmitter, NativeModules } from 'react-native';
-import { MPCameraViewFitMode, MPError, MPRoute, OnLegSelectedListener } from "../../index";
+import { MPCameraViewFitMode, MPDirectionsRendererOptions, MPError, MPRoute, OnLegSelectedListener } from "../../index";
 import { EventNames } from './EventNames';
 import { RouteStopIconConfig } from './RouteStopIconConfig';
 
 const { DirectionsRenderer } = NativeModules;
+
+/**
+ * Sent in place of a usage percentage when the app does not supply one, so that the SDK
+ * derives the figure from the route's own progress instead.
+ *
+ * Must stay outside the valid 0-100 range: {@link MPDirectionsRenderer.finishGuidance}
+ * clamps a supplied value into that range, which is what keeps this unreachable from the
+ * public API, and the native modules branch on it to choose which overload to call.
+ */
+const NO_USAGE_PERCENTAGE = -1;
 
 /**
  * Renders a {@link MPRoute} on the map.
@@ -117,6 +127,10 @@ export default class MPDirectionsRenderer {
     /**
      * Enable/Disable the polyline animation when displaying a route element on the map.
      *
+     * @deprecated Use {@link setOptions} with {@link MPDirectionsRendererOptionsParams.animationType},
+     * {@link MPDirectionsRendererOptionsParams.animationRepeating} and
+     * {@link MPDirectionsRendererOptionsParams.animationSpeed} instead.
+     *
      * @public
      * @async
      * @param {boolean} animated
@@ -133,6 +147,9 @@ export default class MPDirectionsRenderer {
      *
      * Colors are given as hex strings (e.g. "#3071D9").
      *
+     * @deprecated Use {@link setOptions} with {@link MPDirectionsRendererOptionsParams.animatedOverlayColor}
+     * (foreground) and {@link MPDirectionsRendererOptionsParams.strokeColor} (background) instead.
+     *
      * @public
      * @async
      * @param {string} foregroundColor the primary color (animated polyline)
@@ -141,6 +158,64 @@ export default class MPDirectionsRenderer {
      */
     public async setPolylineColors(foregroundColor: string, backgroundColor: string): Promise<void> {
         await DirectionsRenderer.setPolyLineColors(foregroundColor, backgroundColor);
+    }
+
+    /**
+     * Set the styling and camera options of the rendered route.
+     *
+     * Applies immediately, restyling an already rendered route in place. Every option
+     * resolves on its own, in this order: the value set here, then the solution level
+     * default configured in the CMS, then the SDK's built-in default. Options left
+     * unset are therefore inherited rather than reset.
+     *
+     * @public
+     * @async
+     * @param {MPDirectionsRendererOptions} options
+     * @returns {Promise<void>}
+     */
+    public async setOptions(options: MPDirectionsRendererOptions): Promise<void> {
+        await DirectionsRenderer.setOptions(JSON.stringify(options));
+    }
+
+    /**
+     * Gets the currently effective styling and camera options of the rendered route.
+     *
+     * Each option is resolved as: the value set with {@link setOptions}, then the
+     * solution level default configured in the CMS, then the SDK's built-in default.
+     * An option reading back as undefined has no default in force for it yet.
+     *
+     * @public
+     * @async
+     * @returns {Promise<MPDirectionsRendererOptions>}
+     */
+    public async getOptions(): Promise<MPDirectionsRendererOptions> {
+        const options: string = await DirectionsRenderer.getOptions();
+        return MPDirectionsRendererOptions.create(JSON.parse(options));
+    }
+
+    /**
+     * Signals that guidance on the current route has finished, either because the user
+     * arrived or because they ended navigation.
+     *
+     * Has no effect when no route is set, or when guidance on the current route has
+     * already finished. {@link clear} finishes guidance implicitly, so there is no need
+     * to call both.
+     *
+     * @public
+     * @async
+     * @param {?number} [usagePercentage] How much of the route was travelled, from 0 to 100.
+     * Values outside that range are clamped. Omit it to let the SDK derive the figure from
+     * the route's own progress.
+     * @returns {Promise<void>}
+     */
+    public async finishGuidance(usagePercentage?: number): Promise<void> {
+        // A non-finite value cannot be clamped into range - NaN in particular survives Math.min/max,
+        // and every comparison against it is false, so it would slip past the natives' `< 0` sentinel
+        // check and reach the SDK as a usage figure. Treat it as "not supplied" instead.
+        const usage = usagePercentage != null && Number.isFinite(usagePercentage)
+            ? Math.max(0, Math.min(100, usagePercentage))
+            : NO_USAGE_PERCENTAGE;
+        await DirectionsRenderer.finishGuidance(usage);
     }
 
     /**

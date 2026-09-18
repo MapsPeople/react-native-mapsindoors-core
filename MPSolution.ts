@@ -1,4 +1,5 @@
 import { MPSolutionConfig } from "../../index";
+import { resolveLanguageTag } from "./MPLanguageTag";
 import MPPOIType from "./MPPOIType";
 import MPUtils from "./MPUtils";
 
@@ -66,12 +67,42 @@ export default class MPSolution {
     /**
      * Check if the solution supports a language.
      *
+     * Matching follows BCP-47 / RFC 4647 rather than string equality, so the tag does not have to
+     * be spelled exactly the way the CMS spells it. Casing is ignored (`zh-hant` matches
+     * `zh-Hant`), the ICU underscore form is accepted (`zh_Hans`), legacy region-only Chinese tags
+     * resolve to their script (`zh-CN` matches `zh-Hans`, `zh-TW` matches `zh-Hant`), and a more
+     * specific tag falls back to a less specific one (`en-US` matches `en`).
+     *
+     * Deliberately conservative about ambiguity: bare `zh` does **not** match a solution that
+     * advertises only `zh-Hans` and `zh-Hant`, because there is no way to tell which script is
+     * wanted. Pass the script explicitly in that case.
+     *
+     * `true` means the tag is safe to pass to {@link MapsIndoors.setLanguage}. `false` is not a
+     * guarantee that `setLanguage` will reject it - see that method for what its boolean means on
+     * each platform.
+     *
      * @public
-     * @param {?string} [language]
+     * @param {?string} [language] A BCP-47 language tag, for example `en`, `zh-Hans` or `zh-CN`.
      * @returns {boolean}
      */
     public hasLanguage(language?: string): boolean {
-        return language ? this.availableLanguages.includes(language) : false;
+        return this.resolveLanguage(language) !== undefined;
+    }
+
+    /**
+     * Resolve a language tag to the exact tag this solution advertises.
+     *
+     * The companion to {@link hasLanguage}, for when a yes or no is not enough: given a device
+     * locale, this returns the tag to hand to {@link MapsIndoors.setLanguage}, spelled the way the
+     * CMS spells it. `resolveLanguage("zh-Hant-TW")` returns `"zh-Hant"` for a solution that
+     * publishes it.
+     *
+     * @public
+     * @param {?string} [language] A BCP-47 language tag, for example `en`, `zh-Hans` or `zh-CN`.
+     * @returns {(string | undefined)} The matching advertised tag, or undefined if there is none.
+     */
+    public resolveLanguage(language?: string): string | undefined {
+        return resolveLanguageTag(language, this.availableLanguages);
     }
 
     /**

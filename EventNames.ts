@@ -18,4 +18,7 @@ export enum EventNames {
     onLiveLocationUpdate = "onLiveLocationUpdate",
     floorSelector = "floorSelector",
     onLegSelected = "onLegSelected",
+    // Canonical copy. Also spelled out in iOS's MapsIndoorsData.Event and as a literal in the
+    // Android bridge; drift silently delivers no progress.
+    onBaseMapCacheProgress = "onBaseMapCacheProgress",
 }

@@ -45,6 +45,30 @@ export default class MPError {
    */
   static readonly invalidApiKey: number = 100;
 
+  /**
+   * Occurs if base-map tile caching is attempted on a map provider that cannot cache base-map
+   * tiles. The Mapbox provider supports it; the Google Maps provider does not.
+   *
+   * Canonical copy. The same value is spelled out in Android's `MIError.BASEMAP_CACHE_NOT_SUPPORTED`
+   * and as a literal in iOS's `doRejectBaseMapCache`; drift silently reports "not supported" as a
+   * generic failure.
+   *
+   * @static
+   * @readonly
+   * @type {number}
+   */
+  static readonly baseMapCachingNotSupported: number = 9000;
+
+  /**
+   * Occurs if base-map tile caching is attempted before a map provider's base-map cache has been
+   * registered with the SDK.
+   *
+   * @static
+   * @readonly
+   * @type {number}
+   */
+  static readonly baseMapCacheNotRegistered: number = 9001;
+
     /**
      * Creates an instance of MPError.
      *
@@ -81,8 +105,31 @@ export default class MPError {
         );
     }
 
+    /**
+     * Turn a rejection from a native module into an {@link MPError}.
+     *
+     * The native modules reject with a JSON-encoded MPError, but a rejection reaching here can
+     * also come from the bridge itself or from JavaScript, and then the message is plain text.
+     * Parsing that blindly threw a SyntaxError and threw away the real message, so a caller saw
+     * "JSON Parse error: Unexpected character: E" instead of what actually went wrong. Fall back
+     * to wrapping the message as an unknown error, which keeps it readable and keeps this method's
+     * contract - it returns an MPError, it does not throw a different one.
+     *
+     * @public
+     * @static
+     * @param {Error} error
+     * @returns {MPError}
+     */
     public static parse(error: Error): MPError {
-        return MPError.create(JSON.parse(error.message))
+        try {
+            const parsed = JSON.parse(error?.message);
+            if (parsed !== null && typeof parsed === "object" && typeof parsed.code === "number") {
+                return MPError.create(parsed);
+            }
+        } catch {
+            // Not a native MPError payload; fall through to wrapping the raw message.
+        }
+        return new MPError(MPError.unknownError, error?.message ?? "Unknown error");
     }
 }
 

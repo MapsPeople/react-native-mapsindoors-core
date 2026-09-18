@@ -1,4 +1,4 @@
-import { NativeModules, Platform } from 'react-native';
+import { EmitterSubscription, NativeEventEmitter, NativeModules, Platform } from 'react-native';
 import {
     MPMapStyle,
     MPLocation, MPSolution, MPVenue, MPQuery, MPFilter,
@@ -7,6 +7,8 @@ import {
 } from "../../index";
 import MPBuildingCollection from './MPBuildingCollection';
 import MPVenueCollection from './MPVenueCollection';
+import { EventNames } from './EventNames';
+import { OnBaseMapCacheProgressListener } from './OnBaseMapCacheProgressListener';
 
 const { MapsIndoorsModule } = NativeModules;
 /**
@@ -117,7 +119,7 @@ export default class MapsIndoors {
      */
     public static async getLocations(): Promise<MPLocation[]> {
         return MapsIndoorsModule.getLocations()
-            .catch((err: Error) => {Promise.reject(MPError.parse(err))})
+            .catch((err: Error) => Promise.reject(MPError.parse(err)))
             .then((locationsString: string) => {
                 const locations: MPLocation[] = JSON.parse(locationsString).map((location: any) => MPLocation.create(location));
                 return Promise.resolve(locations);
@@ -175,7 +177,8 @@ export default class MapsIndoors {
      * @returns {Promise<string>}
      */
     public static async getDefaultLanguage(): Promise<string> {
-        return MapsIndoorsModule.getDefaultLanguage();
+        return MapsIndoorsModule.getDefaultLanguage()
+            .catch((err: Error) => Promise.reject(MPError.parse(err)));
     }
 
     /**
@@ -187,6 +190,9 @@ export default class MapsIndoors {
      * @returns {Promise<string>}
      */
     public static async getLanguage(): Promise<string> {
+        // No MPError mapping on purpose: neither native has a reject path here. iOS resolves a
+        // non-optional String and Android a @NonNull one, both with their own fallback chain, so a
+        // catch would be dead code.
         return MapsIndoorsModule.getLanguage();
     }
 
@@ -250,10 +256,12 @@ export default class MapsIndoors {
      * @returns {Promise<MPSolution>}
      */
     public static async getSolution(): Promise<MPSolution> {
-        return MapsIndoorsModule.getSolution().then((solutionString: string) => {
-            const solution: MPSolution = MPSolution.create(JSON.parse(solutionString));
-            return Promise.resolve(solution);
-        });
+        return MapsIndoorsModule.getSolution()
+            .catch((err: Error) => Promise.reject(MPError.parse(err)))
+            .then((solutionString: string) => {
+                const solution: MPSolution = MPSolution.create(JSON.parse(solutionString));
+                return Promise.resolve(solution);
+            });
     }
 
     /**
@@ -469,18 +477,48 @@ export default class MapsIndoors {
     /**
      * Sets the SDK's internal language.
      *
-     * By default, the SDK language can be:
+     * The tag should be one the solution advertises - see {@link getAvailableLanguages} - and is
+     * matched loosely: casing is ignored, and legacy region-only Chinese tags resolve to their
+     * script, so `zh-CN` selects `zh-Hans` and `zh-TW` selects `zh-Hant`. Use
+     * {@link MPSolution.hasLanguage} to check a tag before calling, or
+     * {@link MPSolution.resolveLanguage} to turn a device locale into the exact tag the solution
+     * publishes.
      *
-     * * the solution's default language ({@link MPSolutionInfo#getDefaultLanguage()}).
-     * * the current device language, if the MapsIndoors data isn't available (ie: first app run without network access).
+     * Until this is called, the SDK language is:
+     *
+     * * the solution's default language - see {@link getDefaultLanguage}.
+     * * the current device language, if the MapsIndoors data isn't available (ie: first app run
+     *   without network access).
+     *
+     * The returned boolean does not mean the same thing on both platforms, and an app should not
+     * branch on it without reading this:
+     *
+     * * On **Android** it is `false` when the tag does not resolve against the solution's
+     *   available languages, and also when the SDK has no solution yet or is mid-
+     *   {@link synchronizeContent}. In that second case the change is *queued* and applied once
+     *   the SDK is ready, so `false` is not "it will never take effect".
+     * * On **iOS** it reports only that the tag was accepted; there is no check against the
+     *   solution's available languages, so in the default configuration it is `true` for any
+     *   non-empty tag. An unsupported language is reconciled later, on the next solution fetch,
+     *   which reverts the SDK to the solution's default.
+     *
+     * A `false` here is therefore a reliable "this did not take effect" signal on Android only. To
+     * confirm the language actually changed on either platform, read it back with
+     * {@link getLanguage}.
+     *
+     * An empty or whitespace-only tag resolves `false` without reaching the native SDK, matching
+     * Android's own precondition. iOS would otherwise accept it and store an empty language.
      *
      * @public
      * @static
      * @async
-     * @param {string} language
+     * @param {string} language A BCP-47 language tag, for example `en`, `zh-Hans` or `zh-CN`.
      * @returns {Promise<boolean>}
      */
     public static async setLanguage(language: string): Promise<boolean> {
+        if (!language?.trim()) {
+            return false;
+        }
         return MapsIndoorsModule.setLanguage(language);
     }
 
@@ -567,5 +605,111 @@ export default class MapsIndoors {
      */
     public static async cacheData(apiKey: String): Promise<boolean> {
         return MapsIndoorsModule.cacheData(apiKey);
+    }
+
+    /**
+     * Checks whether the map provider in use can cache base-map tiles at all.
+     *
+     * Base-map tiles are the outdoor map rendered underneath MapsIndoors, and they live in the map
+     * provider's own storage - separate from the MapsIndoors content cached by {@link cacheData}.
+     * Only the Mapbox provider can cache them; on the Google Maps provider this returns false and
+     * every other base-map caching call rejects with {@link MPError.baseMapCachingNotSupported}.
+     *
+     * Check this before offering offline base maps in the UI, so an unsupported provider fails fast
+     * instead of once per venue.
+     *
+     * @public
+     * @static
+     * @async
+     * @returns {Promise<boolean>} True if base-map tiles can be cached.
+     */
+    public static async isBaseMapCachingSupported(): Promise<boolean> {
+        return MapsIndoorsModule.isBaseMapCachingSupported();
+    }
+
+    /**
+     * Enables or disables base-map tile caching for the solution matching the given {@link apiKey}.
+     *
+     * The flag only marks the solution, it downloads nothing - call
+     * {@link synchronizeBaseMapTiles} for that. Turning it off does not remove already-cached
+     * tiles either; those are reclaimed when the solution's cache is removed.
+     *
+     * The flag is persisted, so it survives an app restart and only has to be set once.
+     *
+     * It is a property of the solution, not of the map provider, so it is accepted and stored even
+     * where {@link isBaseMapCachingSupported} is false - on Google Maps this resolves successfully
+     * and sets a flag nothing can act on, and only {@link synchronizeBaseMapTiles} reports
+     * {@link MPError.baseMapCachingNotSupported}. Check {@link isBaseMapCachingSupported} first if
+     * you need to know before then. Rejecting here instead would make the same call behave
+     * differently per map provider, which is worse for code meant to run against either.
+     *
+     * @public
+     * @static
+     * @async
+     * @param {boolean} enabled True to cache base-map tiles for this solution.
+     * @param {string} apiKey The key to the MapsIndoors solution.
+     * @returns {Promise<void>} If the solution is not managed, or the call fails for any other
+     * reason, it will reject with a {@link MPError}.
+     */
+    public static async setBaseMapTilesEnabled(enabled: boolean, apiKey: string): Promise<void> {
+        return MapsIndoorsModule.setBaseMapTilesEnabled(enabled, apiKey)
+            .then(() => { })
+            .catch((err: Error) => Promise.reject(MPError.parse(err)));
+    }
+
+    /**
+     * Downloads and caches base-map tiles so the map can render without a network connection.
+     *
+     * Covers every solution that base-map tile caching has been enabled for with
+     * {@link setBaseMapTilesEnabled}, unless {@link apiKeys} narrows it to a subset. This is a
+     * long-running network download that can take minutes - pass {@link onProgress} to follow it.
+     *
+     * This runs independently of {@link synchronizeContent} and {@link cacheData}, which cache the
+     * MapsIndoors content itself. Both are needed for a fully offline map.
+     *
+     * On iOS, a {@link MapView} has to have been mounted at least once first: the iOS SDK registers
+     * its base-map cache when it builds the map provider, and until then this rejects with
+     * {@link MPError.baseMapCachingNotSupported} even on Mapbox. Android has no such ordering
+     * requirement.
+     *
+     * Run one call at a time. Progress arrives on a single channel carrying only the fraction, with
+     * nothing identifying the call, so two overlapping calls interleave their progress - including
+     * into a caller that passed no {@link onProgress} of its own. The default already covers every
+     * enabled solution in one call, so there is rarely a reason to fan out.
+     *
+     * @public
+     * @static
+     * @async
+     * @param {OnBaseMapCacheProgressListener} [onProgress] Optional listener called with the
+     * fraction completed, from 0.0 to 1.0. Not every map provider reports progress.
+     * @param {string[]} [apiKeys] An optional list of solution API keys to narrow the operation to.
+     * Defaults to every solution with base-map tile caching enabled. An empty array narrows it to
+     * nothing and caches nothing, which is deliberately not the same as omitting the argument - a
+     * filter that matched no solutions should not turn into a download of all of them.
+     * @returns {Promise<void>} Rejects with a {@link MPError} if the map provider cannot cache
+     * base-map tiles ({@link MPError.baseMapCachingNotSupported}) or a download fails.
+     */
+    public static async synchronizeBaseMapTiles(onProgress?: OnBaseMapCacheProgressListener, apiKeys?: string[]): Promise<void> {
+        let subscription: EmitterSubscription | undefined;
+        if (onProgress) {
+            // Subscribed before the call rather than in the module's constructor: the native side only
+            // emits while a download is running, and an always-live subscription would keep the JS
+            // callback alive for the lifetime of the app.
+            subscription = new NativeEventEmitter(MapsIndoorsModule)
+                .addListener(EventNames.onBaseMapCacheProgress, (event: { progress: number }) => onProgress(event.progress));
+        }
+
+        // try/finally rather than .finally() on the chain: the native method is invoked before the
+        // chain exists, so a synchronous throw there - a JS package newer than the native one, whose
+        // module has no such method - would otherwise leave the subscription holding onProgress for
+        // the lifetime of the app. Only a rejection is parsed as an MPError; a synchronous throw is
+        // not ours to reinterpret, so it propagates as it is.
+        try {
+            return await MapsIndoorsModule.synchronizeBaseMapTiles(apiKeys ? apiKeys : null)
+                .then(() => { })
+                .catch((err: Error) => Promise.reject(MPError.parse(err)));
+        } finally {
+            subscription?.remove();
+        }
     }
 }

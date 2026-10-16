@@ -30,10 +30,12 @@ export default class MPRouteStopIconConfig implements RouteStopIconConfig{
     /**
      * Internal
      *
-     * @returns {URL}
+     * Not a URL: wrapping JSON in one throws on spec-compliant URL implementations (Expo 55+).
+     *
+     * @returns {string}
      */
-    getImage(): URL {
-        return new URL(JSON.stringify(this));
+    getImage(): string {
+        return JSON.stringify(this);
     }
 
     /**

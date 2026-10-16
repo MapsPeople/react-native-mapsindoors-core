@@ -16,6 +16,16 @@ const { DirectionsRenderer } = NativeModules;
 const NO_USAGE_PERCENTAGE = -1;
 
 /**
+ * Encodes a stop icon for the native modules, which download http(s) URLs and otherwise drop the
+ * last character before decoding JSON. That character used to be the `/` React Native's URL
+ * polyfill appended to the JSON it was (mis)used to wrap.
+ */
+function encodeStopIcon(icon: RouteStopIconConfig): string {
+    const image = icon.getImage().toString();
+    return /^https?:\/\//.test(image) ? image : image + '/';
+}
+
+/**
  * Renders a {@link MPRoute} on the map.
  *
  * @export
@@ -105,7 +115,7 @@ export default class MPDirectionsRenderer {
         var iconsAsString = new Map<number, string>();
         if (stopIcons !== null) {
             stopIcons.forEach((icon, index) => {
-                iconsAsString.set(index, icon.getImage().toString());
+                iconsAsString.set(index, encodeStopIcon(icon));
             });
         }
         await DirectionsRenderer.setRoute(JSON.stringify(route), JSON.stringify(Object.fromEntries(iconsAsString.entries())), legIndex);
@@ -121,7 +131,7 @@ export default class MPDirectionsRenderer {
      */
     public async setDefaultRouteStopIcon(icon: RouteStopIconConfig): Promise<void> {
         this._defaultRouteStopIcon = icon;
-        await DirectionsRenderer.setDefaultRouteStopIcon(icon.getImage().toString());
+        await DirectionsRenderer.setDefaultRouteStopIcon(encodeStopIcon(icon));
     }
 
     /**

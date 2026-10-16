@@ -6,5 +6,9 @@
  * @typedef {RouteStopIconConfig}
  */
 export interface RouteStopIconConfig {
-    getImage(): URL;
+    /**
+     * The icon image. An http(s) URL is downloaded by the native SDK; anything else is passed on as
+     * an encoded MPRouteStopIconConfig.
+     */
+    getImage(): URL | string;
 }

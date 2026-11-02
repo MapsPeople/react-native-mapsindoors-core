@@ -1,6 +1,7 @@
 import { EmitterSubscription, NativeEventEmitter, NativeModules } from 'react-native';
 import { MPCameraViewFitMode, MPDirectionsRendererOptions, MPError, MPRoute, OnLegSelectedListener } from "../../index";
 import { EventNames } from './EventNames';
+import { nativeRouteId } from './RouteHandles';
 import { RouteStopIconConfig } from './RouteStopIconConfig';
 
 const { DirectionsRenderer } = NativeModules;
@@ -104,6 +105,10 @@ export default class MPDirectionsRenderer {
     /**
      * Set a route to be rendered. This also resets the selected leg and step indices to 0.
      *
+     * Directions analytics attribute the route to its origin and destination only when it has the
+     * content of a route {@link MPDirectionsService.getRoute} returned since MapsIndoors last loaded,
+     * among its ten most recently used. A copy made through JSON qualifies; an edited route does not.
+     *
      * @public
      * @async
      * @param {?MPRoute} [route]
@@ -118,7 +123,8 @@ export default class MPDirectionsRenderer {
                 iconsAsString.set(index, encodeStopIcon(icon));
             });
         }
-        await DirectionsRenderer.setRoute(JSON.stringify(route), JSON.stringify(Object.fromEntries(iconsAsString.entries())), legIndex);
+        const routeJson = JSON.stringify(route);
+        await DirectionsRenderer.setRoute(routeJson, JSON.stringify(Object.fromEntries(iconsAsString.entries())), legIndex, nativeRouteId(routeJson));
     }
 
     /**

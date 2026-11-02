@@ -8,9 +8,28 @@ import {
 import MPBuildingCollection from './MPBuildingCollection';
 import MPVenueCollection from './MPVenueCollection';
 import { EventNames } from './EventNames';
+import { forgetNativeRoutes } from './RouteHandles';
 import { OnBaseMapCacheProgressListener } from './OnBaseMapCacheProgressListener';
 
 const { MapsIndoorsModule } = NativeModules;
+
+/**
+ * The published version of the map package this file is bundled into, read from its own
+ * package.json rather than kept as a constant so it cannot drift from the released version.
+ *
+ * It is sent on {@link MapsIndoors.load} so the native side can name this wrapper as the component
+ * behind the MapsIndoors Insights session. The SDK snapshots the component when the session starts,
+ * inside the native load, so the version has to travel on the load call itself.
+ */
+const sdkVersion: string = (() => {
+    try {
+        // Resolved relative to this file inside the installed package: <package root>/package.json.
+        return require('../../package.json').version ?? 'unknown';
+    } catch (e) {
+        return 'unknown';
+    }
+})();
+
 /**
  * Main class for accessing data in the MapsIndoors SDK.
  *
@@ -38,7 +57,9 @@ export default class MapsIndoors {
      * @returns {Promise<void>} If the load fails for any reason, it will reject with a {@link MPError}.
      */
     public static async load(apiKey: String, venues: String[] = null): Promise<void> {
-        return MapsIndoorsModule.loadMapsIndoors(apiKey, venues).catch((err: Error) =>
+        // Native forgets its kept routes on load; keep the ids in step.
+        forgetNativeRoutes();
+        return MapsIndoorsModule.loadMapsIndoors(apiKey, venues, sdkVersion).catch((err: Error) =>
             Promise.reject(MPError.parse(err))
         );
     }
@@ -267,6 +288,12 @@ export default class MapsIndoors {
     /**
      * Run a query on all available locations with a query and filter.
      *
+     * Selecting one of the returned locations afterwards is reported to MapsIndoors Insights as a
+     * search-driven selection (`location_searched`) alongside the plain selection event, but only when
+     * the {@link query} carries search text: a call without it, such as a filter-only lookup, marks
+     * nothing and also clears the marks left by the previous text search. A location the app found by
+     * searching its own data outside this call is never reported as search-driven.
+     *
      * @public
      * @static
      * @async
@@ -372,14 +399,19 @@ export default class MapsIndoors {
         if (positonProvider) {
             const positionUpdateListener = (position: MPPositionResultInterface) => {
                 if (Platform.OS === 'ios') {
+                    // The coordinate is [lng, lat] only. floorIndex is optional, and iOS decodes the
+                    // coordinate as numbers, so an undefined floor here becomes null in the JSON and
+                    // every update is rejected (MS-3929). A missing floorIndex key defaults to 0 natively.
                     let obj = {
-                        coordinate: [position.point.longitude, position.point.latitude, position.floorIndex],
+                        coordinate: [position.point.longitude, position.point.latitude],
                         floorIndex: position.floorIndex,
                         bearing: position.bearing,
                         accuracy: position.accuracy,
                         providerName: position.positionProvider
                     }
-                    MapsIndoorsModule.onPositionUpdate(JSON.stringify(obj));
+                    // Nothing awaits this, so a rejected update would otherwise vanish without a trace.
+                    MapsIndoorsModule.onPositionUpdate(JSON.stringify(obj))
+                        .catch((err: any) => console.warn('MapsIndoors: position update rejected', err?.message ?? err));
                 }else {
                     MapsIndoorsModule.onPositionUpdate(JSON.stringify(position));
                 }
@@ -435,6 +467,7 @@ export default class MapsIndoors {
      * @returns {Promise<void>}
      */
     public static async destroy(): Promise<void> {
+        forgetNativeRoutes();
         return MapsIndoorsModule.destroy().then(() => { });
     }
 

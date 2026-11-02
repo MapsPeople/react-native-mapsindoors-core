@@ -1,5 +1,6 @@
 import { NativeModules } from 'react-native';
 import { MPError, MPPoint, MPRoute, MPHighway } from "../../index";
+import { attachNativeRoute } from './RouteHandles';
 
 const { DirectionsService } = NativeModules;
 
@@ -114,7 +115,9 @@ export default class MPDirectionsService {
             res = await DirectionsService.getRoute(JSON.stringify(origin), JSON.stringify(destination), stopsAsJson, optimze, this.id);
         }
         if (res.route !== undefined) {
-            return Promise.resolve(MPRoute.create(JSON.parse(res.route)));
+            const route = MPRoute.create(JSON.parse(res.route));
+            attachNativeRoute(route, res.routeId);
+            return Promise.resolve(route);
         } else {
             return Promise.reject(MPError.create(JSON.parse(res.error)));
         }

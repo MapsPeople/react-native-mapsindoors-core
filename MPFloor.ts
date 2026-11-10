@@ -119,6 +119,31 @@ export default class MPFloor extends MPEntity {
         return this.geometry!.bounds.center;
     }
 
+    /**
+     * Writes the floor in the shape the native SDKs send it.
+     *
+     * Omits `geometry` when it has no coordinates: iOS sends none for a floor whose backend geometry
+     * is a single Polygon (SPEX-1803), and decodes a present `geometry` strictly, so sending an empty
+     * one would fail the whole building. `entityBounds` carries the extent instead, as native sends it.
+     *
+     * @public
+     * @returns {object}
+     */
+    public toJSON(): object {
+        const bbox = this.geometry?.bbox;
+        const hasBounds = Array.isArray(bbox) && bbox.length === 4 && bbox.every(Number.isFinite);
+        return {
+            type: this.type,
+            id: this.id,
+            name: this.name,
+            ...(this.geometry?.coordinates ? { geometry: this.geometry } : {}),
+            aliases: this.aliases,
+            floorIndex: this.floorIndex,
+            buildingId: this.buildingId,
+            ...(hasBounds ? { entityBounds: this.geometry!.bounds.toJSON() } : {}),
+        };
+    }
+
 }
 
 /**

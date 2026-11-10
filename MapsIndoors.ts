@@ -700,10 +700,9 @@ export default class MapsIndoors {
      * This runs independently of {@link synchronizeContent} and {@link cacheData}, which cache the
      * MapsIndoors content itself. Both are needed for a fully offline map.
      *
-     * On iOS, a {@link MapView} has to have been mounted at least once first: the iOS SDK registers
-     * its base-map cache when it builds the map provider, and until then this rejects with
-     * {@link MPError.baseMapCachingNotSupported} even on Mapbox. Android has no such ordering
-     * requirement.
+     * Works before any {@link MapView} exists, so tiles can be cached ahead of the first map. On
+     * iOS, until `MapControl.create` has run this caches the MapsIndoors Mapbox style, so an app
+     * rendering its own style should call `MapControl.create` before syncing.
      *
      * Run one call at a time. Progress arrives on a single channel carrying only the fraction, with
      * nothing identifying the call, so two overlapping calls interleave their progress - including

@@ -26,6 +26,8 @@ export default class MPSolutionConfig {
      * @param {?MPCollisionHandling} [_mpCollisionHandling]
      * @param {?boolean} [_isNewSelection]
      * @param {?number} [_automatedZoomLimit]
+     * @param {?number} [_iconScaleZoomFrom]
+     * @param {?number} [_iconScaleZoomTo]
      */
     private constructor(
         public readonly id: string,
@@ -35,6 +37,8 @@ export default class MPSolutionConfig {
         private _mpCollisionHandling?: MPCollisionHandling,
         private _isNewSelection?: boolean,
         private _automatedZoomLimit?: number,
+        private _iconScaleZoomFrom?: number,
+        private _iconScaleZoomTo?: number,
     ) { }
 
 
@@ -55,6 +59,8 @@ export default class MPSolutionConfig {
             object?.collisionHandling,
             object?.isNewSelection,
             object?.automatedZoomLimit,
+            object?.iconScaleZoomFrom,
+            object?.iconScaleZoomTo,
         );
     }
 
@@ -131,6 +137,28 @@ export default class MPSolutionConfig {
     public set selectable(selectable: boolean | undefined) {
         this.locationSettings.selectable = selectable;
     }
+
+    /**
+     * Get the MapsIndoors zoom where icons start to grow towards their display rule's icon zoom
+     * factor, as the solution stores it. Undefined when not set.
+     *
+     * @public
+     * @type {number | undefined}
+     */
+    public get iconScaleZoomFrom(): number | undefined {
+        return this._iconScaleZoomFrom;
+    }
+
+    /**
+     * Get the MapsIndoors zoom where icons reach their display rule's icon zoom factor, as the
+     * solution stores it. Undefined when not set.
+     *
+     * @public
+     * @type {number | undefined}
+     */
+    public get iconScaleZoomTo(): number | undefined {
+        return this._iconScaleZoomTo;
+    }
 }
 
 /**
@@ -185,4 +213,18 @@ export interface MPSolutionConfigParams {
      * @type {number}
      */
     automatedZoomLimit?: number,
+
+    /**
+     * Start of the icon zoom range
+     *
+     * @type {?number}
+     */
+    iconScaleZoomFrom?: number,
+
+    /**
+     * End of the icon zoom range
+     *
+     * @type {?number}
+     */
+    iconScaleZoomTo?: number,
 }

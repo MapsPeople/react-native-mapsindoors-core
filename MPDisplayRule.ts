@@ -1104,6 +1104,31 @@ export default class MPDisplayRule {
     }
 
     /**
+     * Get the factor the icon grows to across the solution's icon zoom range. Defaults to 1.
+     * @returns Promise<number>
+     */
+    public async getIconZoomFactor(): Promise<number> {
+        return DisplayRule.getIconZoomFactor(this.id).catch((err: Error) => {
+            return Promise.reject(MPError.create(JSON.parse(err.message)));
+        });
+    }
+
+    /**
+     * Set the factor the icon grows to across the solution's icon zoom range.
+     * It must be finite and within 0 < factor <= 4; any other value is ignored with a warning.
+     * @returns Promise<void>
+     */
+    public async setIconZoomFactor(factor: number): Promise<void> {
+        if (!Number.isFinite(factor) || factor <= 0 || factor > 4) {
+            console.warn(`MapsIndoors: ignoring iconZoomFactor ${factor}, must be finite and within 0 < factor <= 4`);
+            return;
+        }
+        return DisplayRule.setIconZoomFactor(this.id, factor).catch((err: Error) => {
+            return Promise.reject(MPError.create(JSON.parse(err.message)));
+        });
+    }
+
+    /**
      * Get the icon's anchor value.
      * @returns Promise<MPIconAnchor>
      */

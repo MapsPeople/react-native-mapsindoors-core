@@ -247,7 +247,8 @@ export default class MPBuilding extends MPEntity {
             "anchor": this.anchor.toJSON(),
             "buildingInfo": this.buildingInfo,
             "geometry": this.geometry,
-            "floors": this._floors,
+            // JSON.stringify writes a Map as {}. Keys become strings, as the native SDKs send them.
+            "floors": Object.fromEntries(this._floors),
             "defaultFloor": this.defaultFloor,
             "address": this.address,
             "boundingBox": this.bounds.toJSON()
